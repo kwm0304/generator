@@ -1,20 +1,16 @@
 package com.kwm0304.cli.service;
 
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.kwm0304.cli.model.ModelField;
 import com.kwm0304.cli.model.ModelInfo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.javaparser.StaticJavaParser;
@@ -50,6 +46,7 @@ public class GeneratorService {
             System.err.println("Failed to create directories: " + e.getMessage());
         }
     }
+    //calls readModelFile assigns keys and values of entities to models hash map and makes files based on map
     public void parseModelFiles(Path modelDir) {
         try (Stream<Path> paths = Files.walk(modelDir)) {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
@@ -59,6 +56,28 @@ public class GeneratorService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void makeFiles(ModelInfo modelInfo) {
+        Map<String, Path> layerDirs = Map.of(
+                "Service", serviceDir,
+                "Controller", controllerDir,
+                "Repository", repositoryDir
+        );
+        layerDirs.forEach((layer, dirPath) -> {
+            String className = modelInfo.getName() + layer + ".java";
+            Path path = dirPath.resolve(className);
+            String content = generateLayerContent(modelInfo, layer.toLowerCase());
+
+            try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+                writer.write(content);
+            } catch (IOException e) {
+                System.err.println("Failed to write " + layer + " file for " + modelInfo.getName() + ": " + e.getMessage());
+            }
+        });
+    }
+
+    private String generateLayerContent(ModelInfo modelInfo, String lowerCase) {
     }
 
     private void readModelFile(Path path) {
