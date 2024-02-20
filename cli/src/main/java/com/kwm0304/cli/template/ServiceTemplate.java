@@ -17,7 +17,8 @@ public class ServiceTemplate {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("import ").append(convertedDirPath).append(".repository.").append(modelName).append("Repository;\n")
+        builder.append("package ").append(convertedDirPath).append(".service;\n\n")
+                .append("import ").append(convertedDirPath).append(".repository.").append(modelName).append("Repository;\n")
                 .append("import org.springframework.beans.factory.annotation.Autowired;\n")
                 .append("import org.springframework.stereotype.Service;\n")
                 .append("import java.util.List;\n")
