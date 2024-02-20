@@ -33,7 +33,7 @@ public class GeneratorCommand {
             //make directories
             generatorService.makeDirectories(targetDir, generateSecurity);
             //parse model files
-            generatorService.parseModelFiles(modelDir);
+            generatorService.parseModelFiles(modelDir, useLombok);
 
         } else {
             System.out.println("Operation aborted by user.");

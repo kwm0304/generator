@@ -17,14 +17,14 @@ public class BuilderService {
         this.controllerTemplate = controllerTemplate;
         this.repositoryTemplate = repositoryTemplate;
     }
-    public String makeControllerLayer(ModelInfo modelInfo, String parentDirString) {
+    public String makeControllerLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
         StringBuilder builder = new StringBuilder();
-        builder.append(controllerTemplate.generateController(modelInfo, parentDirString));
+        builder.append(controllerTemplate.generateController(modelInfo, parentDirString, useLombok));
         return builder.toString();
     }
-    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString) {
+    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
         StringBuilder builder = new StringBuilder();
-        builder.append(serviceTemplate.generateService(modelInfo, parentDirString));
+        builder.append(serviceTemplate.generateService(modelInfo, parentDirString, useLombok));
         return builder.toString();
     }
     public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString) {

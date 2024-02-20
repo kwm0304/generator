@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceTemplate {
 
-    public String generateService(ModelInfo modelInfo, String parentDirString) {
+    public String generateService(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
         String directoryPath = parentDirString;
         String convertedDirPath = StringUtils.convertPath(directoryPath);
         String modelName = modelInfo.getName();

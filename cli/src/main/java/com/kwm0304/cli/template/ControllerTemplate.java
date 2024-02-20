@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class ControllerTemplate {
 
 
-    public String generateController(ModelInfo modelInfo, String parentDirString) {
+    public String generateController(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
         String directoryPath = parentDirString;
         String convertedDirPath = StringUtils.convertPath(directoryPath);
         String modelName = modelInfo.getName();

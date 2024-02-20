@@ -53,13 +53,13 @@ public class GeneratorService {
         }
     }
     //calls readModelFile assigns keys and values of entities to models hash map and makes files based on map
-    public void parseModelFiles(Path modelDir) {
+    public void parseModelFiles(Path modelDir, boolean useLombok) {
         Path parentDir = modelDir.getParent();
         String parentDirString = parentDir.toString();
         try (Stream<Path> paths = Files.walk(modelDir)) {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
             models.values().forEach(modelInfo -> {
-                makeFiles(modelInfo, parentDirString);
+                makeFiles(modelInfo, parentDirString, useLombok);
                 System.out.println("modelInfo name: " + modelInfo.getName());
                 System.out.println("modelInfo fields: " + modelInfo.getFields());
             });
@@ -68,7 +68,7 @@ public class GeneratorService {
         }
     }
 
-    private void makeFiles(ModelInfo modelInfo, String parentDirString) {
+    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
         Map<String, Path> layerDirs = Map.of(
                 "Service", serviceDir,
                 "Controller", controllerDir,
@@ -77,7 +77,7 @@ public class GeneratorService {
         layerDirs.forEach((layer, dirPath) -> {
             String className = modelInfo.getName() + layer + ".java";
             Path path = dirPath.resolve(className);
-            String content = generateLayerContent(modelInfo, layer.toLowerCase(), parentDirString);
+            String content = generateLayerContent(modelInfo, layer.toLowerCase(), parentDirString, useLombok);
 
             try (BufferedWriter writer = Files.newBufferedWriter(path)) {
                 writer.write(content);
@@ -87,12 +87,12 @@ public class GeneratorService {
         });
     }
 
-    private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString) {
+    private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok) {
         switch (layer) {
             case "controller":
-                return builderService.makeControllerLayer(modelInfo, parentDirString);
+                return builderService.makeControllerLayer(modelInfo, parentDirString, useLombok);
             case "service":
-                return builderService.makeServiceLayer(modelInfo, parentDirString);
+                return builderService.makeServiceLayer(modelInfo, parentDirString, useLombok);
             case "repository":
                 return builderService.makeRepositoryLayer(modelInfo, parentDirString);
             default:
