@@ -1,1 +1,3 @@
 1708389556732:generate -l true -s true -p src/main/java/com/kwm0304/cli/template/security
+1708431142400:generate -l true -s true -p src/main/java/com/kwm0304/cli/test
+1708431626694:generate -l true -s false -p src/main/java/com/kwm0304/cli/test

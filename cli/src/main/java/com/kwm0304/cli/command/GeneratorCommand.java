@@ -16,6 +16,9 @@ public class GeneratorCommand {
     private Path targetDir;
     private Path modelDir;
     private GeneratorService generatorService;
+    public GeneratorCommand(GeneratorService generatorService) {
+        this.generatorService = generatorService;
+    }
 
     @ShellMethod(key = "generate", value = "Generates boilerplate controller, repository, service and optional security files based on path to models directory.")
     public void generate(

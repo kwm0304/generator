@@ -15,8 +15,9 @@ import java.util.stream.Stream;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class GeneratorService {
     private Path serviceDir;
     private Path controllerDir;
@@ -52,6 +53,8 @@ public class GeneratorService {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
             models.values().forEach(modelInfo -> {
                 makeFiles(modelInfo);
+                System.out.println("modelInfo name: " + modelInfo.getName());
+                System.out.println("modelInfo fields: " + modelInfo.getFields());
             });
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,6 +81,7 @@ public class GeneratorService {
     }
 
     private String generateLayerContent(ModelInfo modelInfo, String lowerCase) {
+        return "yo";
     }
 
     private void readModelFile(Path path) {
@@ -114,6 +118,4 @@ public class GeneratorService {
             System.err.println("Failed to read model file: " + e.getMessage());
         }
     }
-
-
 }
