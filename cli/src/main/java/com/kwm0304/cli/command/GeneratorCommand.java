@@ -6,8 +6,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -17,10 +15,6 @@ public class GeneratorCommand {
 
     private Path targetDir;
     private Path modelDir;
-    private Path serviceDir;
-    private Path controllerDir;
-    private Path repositoryDir;
-    private Path securityDir;
     private GeneratorService generatorService;
 
     @ShellMethod(key = "generate", value = "Generates boilerplate controller, repository, service and optional security files based on path to models directory.")
@@ -34,38 +28,19 @@ public class GeneratorCommand {
             targetDir = modelDir.getParent();
 
             //make directories
-            makeDirectories(targetDir, generateSecurity);
+            generatorService.makeDirectories(targetDir, generateSecurity);
+            //parse model files
+            generatorService.parseModelFiles(modelDir);
 
         } else {
             System.out.println("Operation aborted by user.");
         }
-        //parseModelFile
+
         //create files based on model info
 
     }
 
-    private void makeDirectories(Path targetDir, boolean generateSecurity) {
-        if (targetDir == null) {
-            System.err.println("Target directory cannot be null");
-            return;
-        }
-        try {
-            serviceDir = targetDir.resolve("service");
-            controllerDir = targetDir.resolve("controller");
-            repositoryDir = targetDir.resolve("repository");
 
-            if (generateSecurity) {
-                securityDir = targetDir.resolve("security");
-                Files.createDirectories(securityDir);
-            }
-
-            Files.createDirectories(serviceDir);
-            Files.createDirectories(controllerDir);
-            Files.createDirectories(repositoryDir);
-        } catch (IOException e) {
-            System.err.println("Failed to create directories: " + e.getMessage());
-        }
-    }
 
     public boolean verifyPath(String modelDirString) {
         Scanner scanner = new Scanner(System.in);
