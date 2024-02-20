@@ -90,7 +90,7 @@ public class GeneratorService {
     private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString) {
         switch (layer) {
             case "controller":
-                return builderService.makeControllerLayer(modelInfo);
+                return builderService.makeControllerLayer(modelInfo, parentDirString);
             case "service":
                 return builderService.makeServiceLayer(modelInfo, parentDirString);
             case "repository":

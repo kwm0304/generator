@@ -8,7 +8,14 @@ public class ModelInfo {
     List<ModelField> fields = new ArrayList<>();
     public ModelInfo() {}
 
-
+    public String getIdFieldType() {
+        for (ModelField field : fields) {
+            if (field.isId()) {
+                return field.getType();
+            }
+        }
+        return "Long";
+    }
 
     public ModelInfo(String name, List<ModelField> fields) {
         this.name = name;
