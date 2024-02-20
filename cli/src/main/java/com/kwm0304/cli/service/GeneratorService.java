@@ -94,7 +94,7 @@ public class GeneratorService {
             case "service":
                 return builderService.makeServiceLayer(modelInfo, parentDirString);
             case "repository":
-                builderService.makeRepositoryLayer(modelInfo);
+                return builderService.makeRepositoryLayer(modelInfo);
             default:
                 return "";
         }
