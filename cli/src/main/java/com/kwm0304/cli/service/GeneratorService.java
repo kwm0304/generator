@@ -24,6 +24,11 @@ public class GeneratorService {
     private Path repositoryDir;
     private Path securityDir;
     private Map<String, ModelInfo> models = new HashMap<>();
+    private BuilderService builderService;
+
+    public GeneratorService(BuilderService builderService) {
+        this.builderService = builderService;
+    }
 
     public void makeDirectories(Path targetDir, boolean generateSecurity) {
         if (targetDir == null) {
@@ -80,9 +85,20 @@ public class GeneratorService {
         });
     }
 
-    private String generateLayerContent(ModelInfo modelInfo, String lowerCase) {
-        return "yo";
+    private String generateLayerContent(ModelInfo modelInfo, String layer) {
+        switch (layer) {
+            case "controller":
+                return builderService.makeControllerLayer(modelInfo);
+            case "service":
+                return builderService.makeServiceLayer(modelInfo);
+            case "repository":
+                builderService.makeRepositoryLayer(modelInfo);
+            default:
+                return "";
+        }
     }
+
+
 
     private void readModelFile(Path path) {
         try {
