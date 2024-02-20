@@ -1,19 +1,24 @@
 package com.kwm0304.cli.template;
 
+import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.model.ModelInfo;
 import org.springframework.stereotype.Service;
 
 //TODO: need to pass in path to repository and import it
 @Service
 public class ServiceTemplate {
-    public String generateService(ModelInfo modelInfo) {
+
+    public String generateService(ModelInfo modelInfo, String parentDirString) {
+        String directoryPath = parentDirString;
+        String convertedDirPath = StringUtils.convertPath(directoryPath);
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String repositoryName = modelName + "Repository";
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("import org.springframework.beans.factory.annotation.Autowired;\n")
+        builder.append("import ").append(convertedDirPath).append(".repository.").append(modelName).append("Repository;\n")
+                .append("import org.springframework.beans.factory.annotation.Autowired;\n")
                 .append("import org.springframework.stereotype.Service;\n")
                 .append("import java.util.List;\n")
                 .append("import java.util.Optional;\n\n")

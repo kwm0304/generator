@@ -16,9 +16,9 @@ public class BuilderService {
         builder.append("controller");
         return builder.toString();
     }
-    public String makeServiceLayer(ModelInfo modelInfo) {
+    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString) {
         StringBuilder builder = new StringBuilder();
-        builder.append(serviceTemplate.generateService(modelInfo));
+        builder.append(serviceTemplate.generateService(modelInfo, parentDirString));
         return builder.toString();
     }
     public String makeRepositoryLayer(ModelInfo modelInfo) {
