@@ -2,6 +2,7 @@ package com.kwm0304.cli.service;
 
 import com.kwm0304.cli.model.ModelInfo;
 import com.kwm0304.cli.template.ControllerTemplate;
+import com.kwm0304.cli.template.RepositoryTemplate;
 import com.kwm0304.cli.template.ServiceTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Service;
 public class BuilderService {
     private ServiceTemplate serviceTemplate;
     private ControllerTemplate controllerTemplate;
+    private RepositoryTemplate repositoryTemplate;
 
-    public BuilderService(ServiceTemplate serviceTemplate, ControllerTemplate controllerTemplate) {
+    public BuilderService(ServiceTemplate serviceTemplate, ControllerTemplate controllerTemplate, RepositoryTemplate repositoryTemplate) {
         this.serviceTemplate = serviceTemplate;
         this.controllerTemplate = controllerTemplate;
+        this.repositoryTemplate = repositoryTemplate;
     }
     public String makeControllerLayer(ModelInfo modelInfo, String parentDirString) {
         StringBuilder builder = new StringBuilder();
@@ -26,7 +29,7 @@ public class BuilderService {
     }
     public String makeRepositoryLayer(ModelInfo modelInfo) {
         StringBuilder builder = new StringBuilder();
-        builder.append("repository");
+        builder.append(repositoryTemplate.generateRepository(modelInfo));
         return builder.toString();
     }
 }
