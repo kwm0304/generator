@@ -16,6 +16,8 @@ public class GeneratorCommand {
     private Path targetDir;
     private Path modelDir;
     private GeneratorService generatorService;
+    private String userClass;
+
     public GeneratorCommand(GeneratorService generatorService) {
         this.generatorService = generatorService;
     }
@@ -29,7 +31,9 @@ public class GeneratorCommand {
         if (verifyPath(modelDirString)) {
             modelDir = Paths.get(modelDirString);
             targetDir = modelDir.getParent();
-
+            if (generateSecurity) {
+                getUserClass();
+            }
             //make directories
             generatorService.makeDirectories(targetDir, generateSecurity);
             //parse model files
@@ -64,4 +68,13 @@ public class GeneratorCommand {
             return false;
         }
     }
+
+    public String getUserClass() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("What is the name of your user class?");
+        String userInput = scanner.nextLine();
+        return userClass = userInput;
+    }
+
+
 }
