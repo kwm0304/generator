@@ -21,7 +21,37 @@ public class UserFieldsTemplate {
                     .append(tab).append(tab).append("this.tokens = tokens;\n")
                     .append(tab).append("}\n");
         }
-        builder.append("}");
+        builder.append(tab).append("\n" +
+                "    @Override\n" +
+                "    public boolean isAccountNonExpired() {\n" +
+                "        return true;\n" +
+                "    }\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public boolean isAccountNonLocked() {\n" +
+                "        return true;\n" +
+                "    }\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public boolean isCredentialsNonExpired() {\n" +
+                "        return true;\n" +
+                "    }\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public boolean isEnabled() {\n" +
+                "        return true;\n" +
+                "    }\n" +
+                "\n" +
+                "    public void setUsername(String username) {\n" +
+                "        this.username = username;\n" +
+                "    }\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public Collection<? extends GrantedAuthority> getAuthorities() {\n" +
+                "        return List.of(new SimpleGrantedAuthority(role.name()));\n" +
+                "    }\n")
+                .append("}");
         return builder.toString();
+
     }
 }
