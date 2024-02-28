@@ -22,8 +22,12 @@ public class JwtAuthFilterTemplate {
                 .append("import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;\n")
                 .append("import org.springframework.stereotype.Component;\n")
                 .append("import org.springframework.web.filter.OncePerRequestFilter;\n")
-                .append("import java.io.IOException;\n\n")
-                .append("@Component\n")
+                .append("import java.io.IOException;\n\n");
+
+                if (useLombok) {
+                    builder.append("@AllArgsConstructor\n");
+                }
+                builder.append("@Component\n")
                 .append("public class JwtAuthFilter extends OncePerRequestFilter {\n")
                 .append(tab).append("private final JwtService jwtService;\n")
                 .append(tab).append("private final UserDetailsServiceImpl userDetailsServiceImpl;\n");
