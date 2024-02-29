@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserRepositoryOptionalTemplate {
     public String genMethod(String userClass, String parentDirString, String modelDirStr, String userIdType) {
         String convertedParent = StringUtils.convertPath(parentDirString);

@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JwtAuthFilterTemplate {
     public String genAuthFilter(String parentDirString,  boolean useLombok) {
         String convertedParent = StringUtils.convertPath(parentDirString);

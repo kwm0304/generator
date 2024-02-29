@@ -1,5 +1,8 @@
 package com.kwm0304.cli.template.security;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class UserFieldsTemplate {
     public String genMethods(String userClass, boolean useLombok) {
         String lowercaseUser = userClass.toLowerCase();

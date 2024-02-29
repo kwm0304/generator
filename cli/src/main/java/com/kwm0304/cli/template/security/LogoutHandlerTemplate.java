@@ -1,9 +1,10 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
-
+@Service
 public class LogoutHandlerTemplate {
     public String genLogoutHandler(String parentDirString, String modelDirString, boolean useLombok) {
         String packagePathString = parentDirString;

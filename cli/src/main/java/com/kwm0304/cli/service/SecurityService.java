@@ -2,6 +2,7 @@ package com.kwm0304.cli.service;
 
 import com.kwm0304.cli.model.FileContent;
 import com.kwm0304.cli.template.security.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 public class SecurityService {
+
     private final AuthControllerTemplate authControllerTemplate;
     private final AuthResponseTemplate authResponseTemplate;
     private final AuthService authService;
@@ -61,6 +63,7 @@ public class SecurityService {
         List<FileContent> files = new ArrayList<>();
         files.add(new FileContent("CustomLogoutHandler.java", logoutHandlerTemplate.genLogoutHandler(parentDirString, modelDirString, useLombok)));
         files.add(new FileContent("SecurityConfig.java", securityConfigTemplate.genSecurityConfig(parentDirString, useLombok)));
+        files.add(new FileContent("CorsConfig.java", corsConfigTemplate.genCorsConfig(parentDirString)));
         return files;
     }
 
@@ -89,6 +92,12 @@ public class SecurityService {
         files.add(new FileContent("AuthResponse.java", authResponseTemplate.genAuthResponse(modelDirString, useLombok)));
         files.add(new FileContent("Role.java", roleTemplate.genRoleEnum(modelDirString)));
         files.add(new FileContent("Token.java", tokenTemplate.genToken(userClass, modelDirString, useLombok)));
+        return files;
+    }
+
+    public List<FileContent> makeRepositoryFiles(String modelDirString, String parentDirString) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("TokenRepository.java", tokenRepositoryTemplate.genTokenRepository(modelDirString, parentDirString)));
         return files;
     }
 

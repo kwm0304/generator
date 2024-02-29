@@ -30,7 +30,6 @@ public class GeneratorService {
     private Map<String, ModelInfo> models = new HashMap<>();
     private BuilderService builderService;
     private SecurityService securityService;
-    String userIdType;
 
     public GeneratorService(BuilderService builderService, SecurityService securityService) {
         this.builderService = builderService;
@@ -193,6 +192,11 @@ public class GeneratorService {
         List<FileContent> modelFiles = securityService.makeModelFiles(modelDirString, useLombok, userClass);
         for (FileContent file : modelFiles) {
             writeSecurityFiles(file.getFileName(), modelDir, file.getContent());
+        }
+
+        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(modelDirString, parentDirString);
+        for (FileContent file : repositoryFiles) {
+            writeSecurityFiles(file.getFileName(), repositoryDir, file.getContent());
         }
     }
 

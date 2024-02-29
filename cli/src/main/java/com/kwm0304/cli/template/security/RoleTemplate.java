@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RoleTemplate {
     public String genRoleEnum(String modelDirPath) {
         String rolePath = modelDirPath;

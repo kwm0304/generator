@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthControllerTemplate {
     public String genAuthController(String parentDirString, String userClass, boolean useLombok, String modelDirString) {
         String convertedParent = StringUtils.convertPath(parentDirString);

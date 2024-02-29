@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthResponseTemplate {
     public String genAuthResponse(String modelDirPath, boolean useLombok) {
         String convertedPath = StringUtils.convertPath(modelDirPath);

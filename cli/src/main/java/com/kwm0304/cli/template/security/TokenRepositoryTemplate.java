@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TokenRepositoryTemplate {
     public String genTokenRepository(String modelDir, String parentDirString) {
         String convertedModel = StringUtils.convertPath(modelDir);

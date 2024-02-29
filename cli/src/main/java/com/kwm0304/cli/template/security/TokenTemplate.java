@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TokenTemplate {
     public String genToken(String userClass, String modelDirString, boolean useLombok) {
         String tab = "    ";
@@ -24,13 +26,14 @@ public class TokenTemplate {
                 .append(tab).append("private Integer id;\n\n")
                 .append(tab).append("@Column(name = \"token\")\n")
                 .append(tab).append("private String token;\n\n")
-                .append(tab).append("@Column(name = \"is_logged_out\")\n\n")
+                .append(tab).append("@Column(name = \"is_logged_out\")\n")
+                .append(tab).append("private boolean loggedOut;\n\n")
                 .append(tab).append("@ManyToOne\n")
-                .append(tab).append("@JoinColumn(name = \"").append(lowercaseUser).append("_id)\n")
+                .append(tab).append("@JoinColumn(name = \"").append(lowercaseUser).append("_id\")\n")
                 .append(tab).append("private ").append(userClass).append(" ").append(lowercaseUser).append(";\n\n");
                 if (!useLombok) {
                     builder.append(tab).append("public Integer getId() { return id; } \n")
-                            .append("public void setId(Integer id) { this.id = id; }\n")
+                            .append(tab).append("public void setId(Integer id) { this.id = id; }\n")
                             .append(tab).append("public String getToken() { return token; }\n")
                             .append(tab).append("public void setToken(String token) { this.token = token; }\n")
                             .append(tab).append("public boolean isLoggedOut() { return loggedOut; }\n")

@@ -1,7 +1,9 @@
 package com.kwm0304.cli.template.security;
 
 import com.kwm0304.cli.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserDetailsServiceImplTemplate {
     public String genUserDetailsService(String parentDir, String userClass, boolean useLombok) {
         String convertedParent = StringUtils.convertPath(parentDir);
