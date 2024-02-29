@@ -19,8 +19,8 @@ public class UserDetailsServiceImplTemplate {
                 builder.append("@AllArgsConstructor\n");
             }
             builder.append("@Service\n")
-                    .append("public class UserDetailsServieImpl implements UserDetailsService {\n")
-                    .append("private final UserRepository;\n");
+                    .append("public class UserDetailsServiceImpl implements UserDetailsService {\n")
+                    .append("private final ").append(userClass).append("Repository userRepository;\n");
                     if (!useLombok) {
                         builder.append("public UserDetailsServiceImpl(").append(userClass).append("Repository userRepository) { this.userRepository = userRepository; }\n");
                     }
