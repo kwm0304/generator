@@ -19,6 +19,7 @@ public class SecurityService {
     private final UserDetailsServiceImplTemplate userDetailsServiceImplTemplate;
     private final UserFieldsTemplate userFieldsTemplate;
     private final UserRepositoryOptionalTemplate userRepositoryOptionalTemplate;
+    private GeneratorService generatorService;
     public SecurityService(AuthControllerTemplate authControllerTemplate,
                            AuthResponseTemplate authResponseTemplate,
                            AuthService authService,
@@ -32,7 +33,8 @@ public class SecurityService {
                            TokenTemplate tokenTemplate,
                            UserDetailsServiceImplTemplate userDetailsServiceImplTemplate,
                            UserFieldsTemplate userFieldsTemplate,
-                           UserRepositoryOptionalTemplate userRepositoryOptionalTemplate) {
+                           UserRepositoryOptionalTemplate userRepositoryOptionalTemplate,
+                           GeneratorService generatorService) {
         this.authControllerTemplate = authControllerTemplate;
         this.authResponseTemplate = authResponseTemplate;
         this.authService = authService;
@@ -47,9 +49,12 @@ public class SecurityService {
         this.userDetailsServiceImplTemplate = userDetailsServiceImplTemplate;
         this.userFieldsTemplate = userFieldsTemplate;
         this.userRepositoryOptionalTemplate = userRepositoryOptionalTemplate;
+        this.generatorService = generatorService;
     }
 
     public String makeSecurityFiles(String userClass, boolean useLombok, String parentDirString, String modelDirString, String userIdType) {
+        String authResponseContent = authResponseTemplate.genAuthResponse(modelDirString, useLombok);
+        generatorService.
         authResponseTemplate.genAuthResponse(modelDirString, useLombok);
         authControllerTemplate.genAuthController(userClass, parentDirString, useLombok, modelDirString);
         authService.genAuthService(parentDirString, modelDirString, userClass, useLombok);

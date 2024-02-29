@@ -22,7 +22,8 @@ public class GeneratorService {
     private Path serviceDir;
     private Path controllerDir;
     private Path repositoryDir;
-    private Path securityDir;
+    private Path configDir;
+    private Path filterDir;
     private Map<String, ModelInfo> models = new HashMap<>();
     private BuilderService builderService;
     private SecurityService securityService;
@@ -44,8 +45,10 @@ public class GeneratorService {
             repositoryDir = targetDir.resolve("repository");
 
             if (generateSecurity) {
-                securityDir = targetDir.resolve("security");
-                Files.createDirectories(securityDir);
+                configDir = targetDir.resolve("config");
+                filterDir = targetDir.resolve("filter");
+                Files.createDirectories(configDir);
+                Files.createDirectories(filterDir);
             }
 
             Files.createDirectories(serviceDir);
@@ -92,6 +95,15 @@ public class GeneratorService {
         if (generateSecurity) {
             userIdType = getIdTypeForUser(userClass);
             securityService.makeSecurityFiles(userClass, useLombok, parentDirString, modelDirString, userIdType);
+        }
+    }
+
+    private void writeSecurityFiles(String fileName, Path dirPath, String content) {
+        Path filePath = dirPath.resolve(fileName);
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            writer.write(content);
+        } catch (IOException e) {
+            System.err.println("Failed to write security file " + fileName + ": " + e.getMessage());
         }
     }
 
