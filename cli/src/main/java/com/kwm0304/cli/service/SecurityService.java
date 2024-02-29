@@ -1,7 +1,15 @@
 package com.kwm0304.cli.service;
 
+import com.kwm0304.cli.model.FileContent;
 import com.kwm0304.cli.template.security.*;
 import org.springframework.stereotype.Service;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SecurityService {
@@ -19,7 +27,6 @@ public class SecurityService {
     private final UserDetailsServiceImplTemplate userDetailsServiceImplTemplate;
     private final UserFieldsTemplate userFieldsTemplate;
     private final UserRepositoryOptionalTemplate userRepositoryOptionalTemplate;
-    private GeneratorService generatorService;
     public SecurityService(AuthControllerTemplate authControllerTemplate,
                            AuthResponseTemplate authResponseTemplate,
                            AuthService authService,
@@ -33,8 +40,7 @@ public class SecurityService {
                            TokenTemplate tokenTemplate,
                            UserDetailsServiceImplTemplate userDetailsServiceImplTemplate,
                            UserFieldsTemplate userFieldsTemplate,
-                           UserRepositoryOptionalTemplate userRepositoryOptionalTemplate,
-                           GeneratorService generatorService) {
+                           UserRepositoryOptionalTemplate userRepositoryOptionalTemplate) {
         this.authControllerTemplate = authControllerTemplate;
         this.authResponseTemplate = authResponseTemplate;
         this.authService = authService;
@@ -49,26 +55,41 @@ public class SecurityService {
         this.userDetailsServiceImplTemplate = userDetailsServiceImplTemplate;
         this.userFieldsTemplate = userFieldsTemplate;
         this.userRepositoryOptionalTemplate = userRepositoryOptionalTemplate;
-        this.generatorService = generatorService;
     }
 
-    public String makeSecurityFiles(String userClass, boolean useLombok, String parentDirString, String modelDirString, String userIdType) {
-        String authResponseContent = authResponseTemplate.genAuthResponse(modelDirString, useLombok);
-        generatorService.
-        authResponseTemplate.genAuthResponse(modelDirString, useLombok);
-        authControllerTemplate.genAuthController(userClass, parentDirString, useLombok, modelDirString);
-        authService.genAuthService(parentDirString, modelDirString, userClass, useLombok);
-        corsConfigTemplate.genCorsConfig(parentDirString);
-        jwtAuthFilterTemplate.genAuthFilter(parentDirString,useLombok);
-        jwtServiceTemplate.genJwtService(parentDirString, modelDirString, userClass, useLombok);
-        logoutHandlerTemplate.genLogoutHandler(parentDirString, modelDirString, useLombok);
-        roleTemplate.genRoleEnum(modelDirString);
-        securityConfigTemplate.genSecurityConfig(parentDirString, useLombok);
-        tokenRepositoryTemplate.genTokenRepository(modelDirString, parentDirString);
-        tokenTemplate.genToken(userClass, modelDirString, useLombok);
-        userDetailsServiceImplTemplate.genUserDetailsService(parentDirString, userClass, useLombok);
-        userFieldsTemplate.genMethods(userClass, useLombok);
-        userRepositoryOptionalTemplate.genMethod(userClass, parentDirString, modelDirString, userIdType);
+    public List<FileContent> makeConfigFiles(String parentDirString, String modelDirString, boolean useLombok) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("CustomLogoutHandler.java", logoutHandlerTemplate.genLogoutHandler(parentDirString, modelDirString, useLombok)));
+        files.add(new FileContent("SecurityConfig.java", securityConfigTemplate.genSecurityConfig(parentDirString, useLombok)));
+        return files;
+    }
+
+    public List<FileContent> makeFilterFiles(String parentDirString, boolean useLombok) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("JwtAuthFilter.java", jwtAuthFilterTemplate.genAuthFilter(parentDirString, useLombok)));
+        return files;
+    }
+
+    public List<FileContent> makeServiceFiles(String parentDirString, String modelDirString, String userClass, boolean useLombok) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("AuthService.java", authService.genAuthService(parentDirString, modelDirString, userClass, useLombok)));
+        files.add(new FileContent("JwtService.java", jwtServiceTemplate.genJwtService(parentDirString,modelDirString, userClass, useLombok)));
+        files.add(new FileContent("UserDetailsServiceImpl.java", userDetailsServiceImplTemplate.genUserDetailsService(parentDirString, userClass, useLombok)));
+        return files;
+    }
+
+    public List<FileContent> makeControllerFiles(String parentDirString, String userClass, boolean useLombok, String modelDirString) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("AuthController.java", authControllerTemplate.genAuthController(parentDirString, userClass, useLombok, modelDirString)));
+        return files;
+    }
+
+    public List<FileContent> makeModelFiles(String modelDirString, boolean useLombok, String userClass) {
+        List<FileContent> files = new ArrayList<>();
+        files.add(new FileContent("AuthResponse.java", authResponseTemplate.genAuthResponse(modelDirString, useLombok)));
+        files.add(new FileContent("Role.java", roleTemplate.genRoleEnum(modelDirString)));
+        files.add(new FileContent("Token.java", tokenTemplate.genToken(userClass, modelDirString, useLombok)));
+        return files;
     }
 
 }

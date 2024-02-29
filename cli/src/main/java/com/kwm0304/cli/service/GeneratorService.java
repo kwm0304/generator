@@ -1,15 +1,18 @@
 package com.kwm0304.cli.service;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.kwm0304.cli.model.FileContent;
 import com.kwm0304.cli.model.ModelField;
 import com.kwm0304.cli.model.ModelInfo;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -66,7 +69,7 @@ public class GeneratorService {
         try (Stream<Path> paths = Files.walk(modelDir)) {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
             models.values().forEach(modelInfo -> {
-                makeFiles(modelInfo, parentDirString, useLombok, userClass, generateSecurity, modelDirString);
+                makeFiles(modelInfo, parentDirString, useLombok, userClass, generateSecurity, modelDirString, modelDir);
                 System.out.println("modelInfo name: " + modelInfo.getName());
                 System.out.println("modelInfo fields: " + modelInfo.getFields());
             });
@@ -75,7 +78,7 @@ public class GeneratorService {
         }
     }
 
-    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, boolean generateSecurity, String modelDirString) {
+    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, boolean generateSecurity, String modelDirString, Path modelDir) {
         Map<String, Path> layerDirs = Map.of(
                 "Service", serviceDir,
                 "Controller", controllerDir,
@@ -93,19 +96,12 @@ public class GeneratorService {
             }
         });
         if (generateSecurity) {
-            userIdType = getIdTypeForUser(userClass);
-            securityService.makeSecurityFiles(userClass, useLombok, parentDirString, modelDirString, userIdType);
+            //TODO: append methods in userrepository and userdetails methods
+            genSecurityFiles(userClass, useLombok, parentDirString, modelDirString, modelDir);
         }
     }
 
-    private void writeSecurityFiles(String fileName, Path dirPath, String content) {
-        Path filePath = dirPath.resolve(fileName);
-        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
-            writer.write(content);
-        } catch (IOException e) {
-            System.err.println("Failed to write security file " + fileName + ": " + e.getMessage());
-        }
-    }
+
 
     public String getIdTypeForUser(String userClass) {
         String cleanUser = userClass.toLowerCase();
@@ -169,6 +165,43 @@ public class GeneratorService {
 
         } catch (IOException e) {
             System.err.println("Failed to read model file: " + e.getMessage());
+        }
+    }
+
+    public void genSecurityFiles(String userClass, boolean useLombok, String parentDirString, String modelDirString, Path modelDir) {
+        String userIdType = getIdTypeForUser(userClass);
+        List<FileContent> configFiles = securityService.makeConfigFiles(parentDirString, modelDirString, useLombok);
+        for (FileContent file : configFiles) {
+            writeSecurityFiles(file.getFileName(), configDir, file.getContent());
+        }
+
+        List<FileContent> filterFiles = securityService.makeFilterFiles(parentDirString, useLombok);
+        for (FileContent file : filterFiles) {
+            writeSecurityFiles(file.getFileName(), filterDir, file.getContent());
+        }
+
+        List<FileContent> serviceFiles = securityService.makeServiceFiles(parentDirString, modelDirString, userClass, useLombok);
+        for (FileContent file : serviceFiles) {
+            writeSecurityFiles(file.getFileName(), serviceDir, file.getContent());
+        }
+
+        List<FileContent> controllerFiles = securityService.makeControllerFiles(parentDirString, userClass, useLombok, modelDirString);
+        for (FileContent file : controllerFiles) {
+            writeSecurityFiles(file.getFileName(), controllerDir, file.getContent());
+        }
+
+        List<FileContent> modelFiles = securityService.makeModelFiles(modelDirString, useLombok, userClass);
+        for (FileContent file : modelFiles) {
+            writeSecurityFiles(file.getFileName(), modelDir, file.getContent());
+        }
+    }
+
+    public void writeSecurityFiles(String fileName, Path dirPath, String content) {
+        Path filePath = dirPath.resolve(fileName);
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            writer.write(content);
+        } catch (IOException e) {
+            System.err.println("Failed to write security file " + fileName + ": " + e.getMessage());
         }
     }
 }
