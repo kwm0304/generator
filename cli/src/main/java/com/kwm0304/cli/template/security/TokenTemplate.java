@@ -12,7 +12,7 @@ public class TokenTemplate {
         String convertedPackage = StringUtils.convertPath(modelPath);
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedPackage).append(";\n\n")
-                .append("import java.persistence.*;\n\n");
+                .append("import jakarta.persistence.*;\n\n");
         if (useLombok) {
             builder.append("@Getter\n")
                     .append("@Setter\n");
@@ -22,7 +22,7 @@ public class TokenTemplate {
                 .append("public class Token {\n")
                 .append(tab).append("@Id\n")
                 .append(tab).append("@GeneratedValue(strategy = GenerationType.IDENTITY)\n")
-                .append("@Column(name = \"id\")\n")
+                .append(tab).append("@Column(name = \"id\")\n")
                 .append(tab).append("private Integer id;\n\n")
                 .append(tab).append("@Column(name = \"token\")\n")
                 .append(tab).append("private String token;\n\n")

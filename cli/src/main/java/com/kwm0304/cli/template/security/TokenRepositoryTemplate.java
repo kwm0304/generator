@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TokenRepositoryTemplate {
-    public String genTokenRepository(String modelDir, String parentDirString) {
+    public String genTokenRepository(String modelDir, String parentDirString, String userClass, String idField) {
         String convertedModel = StringUtils.convertPath(modelDir);
         String convertedRepository = StringUtils.convertPath(parentDirString) + ".repository";
         String tab = "    ";

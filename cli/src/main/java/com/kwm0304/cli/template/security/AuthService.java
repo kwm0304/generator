@@ -26,11 +26,12 @@ public class AuthService {
             builder.append("@AllArgsConstructor\n");
         }
         builder.append("@Service\n")
+                .append(tab).append("public class AuthService {\n")
                 .append(tab).append("private final").append(userClass).append("Repository userRepository;\n")
                 .append(tab).append("private final PasswordEncoder passwordEncoder;\n")
                 .append(tab).append("private final JwtService jwtService;\n");
         if (!useLombok) {
-            builder.append(tab).append("public AuthService(UserRepository,\n")
+            builder.append(tab).append("public AuthService(").append(userClass).append("Repository userRepository,\n")
                     .append(tab).append(tab).append(tab).append(tab).append("PasswordEncoder passwordEncoder,\n")
                     .append(tab).append(tab).append(tab).append(tab).append("JwtService jwtService,\n")
                     .append(tab).append(tab).append(tab).append(tab).append("TokenRepository tokenRepository,\n")

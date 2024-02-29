@@ -95,9 +95,9 @@ public class SecurityService {
         return files;
     }
 
-    public List<FileContent> makeRepositoryFiles(String modelDirString, String parentDirString) {
+    public List<FileContent> makeRepositoryFiles(String modelDirString, String parentDirString, String userClass, String idField) {
         List<FileContent> files = new ArrayList<>();
-        files.add(new FileContent("TokenRepository.java", tokenRepositoryTemplate.genTokenRepository(modelDirString, parentDirString)));
+        files.add(new FileContent("TokenRepository.java", tokenRepositoryTemplate.genTokenRepository(modelDirString, parentDirString, userClass, idField)));
         return files;
     }
 

@@ -5,3 +5,5 @@
 1708441666466:generate -l true -s false -p src/main/java/com/kwm0304/cli/test
 1709245170673:generate -l false -s true -p C:\\Users\\Owner|Desktop|modelpath\\demsrc\\main\\java\\com\\test\\demo\\model
 1709245305693:generate -l false -s true -p src/main/java/com/kwm0304/cli/entity
+1709246887330:generate -l false -s true -p cli/src/main/java/com/kwm0304/cli/entity
+1709246919400:generate -l false -s true -p src/main/java/com/kwm0304/cli/entity

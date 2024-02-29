@@ -194,7 +194,7 @@ public class GeneratorService {
             writeSecurityFiles(file.getFileName(), modelDir, file.getContent());
         }
 
-        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(modelDirString, parentDirString);
+        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(modelDirString, parentDirString, userClass, userIdType);
         for (FileContent file : repositoryFiles) {
             writeSecurityFiles(file.getFileName(), repositoryDir, file.getContent());
         }
