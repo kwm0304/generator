@@ -3,7 +3,7 @@ package com.kwm0304.cli.template.security;
 import com.kwm0304.cli.StringUtils;
 
 public class UserRepositoryOptionalTemplate {
-    public String genMethod(String userClass, String parentDirString, String modelDirStr) {
+    public String genMethod(String userClass, String parentDirString, String modelDirStr, String userIdType) {
         String convertedParent = StringUtils.convertPath(parentDirString);
         String convertedModel = StringUtils.convertPath(modelDirStr);
         StringBuilder builder = new StringBuilder();
