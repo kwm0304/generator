@@ -25,9 +25,12 @@ public class GeneratorService {
     private Path securityDir;
     private Map<String, ModelInfo> models = new HashMap<>();
     private BuilderService builderService;
+    private SecurityService securityService;
+    String userIdType;
 
-    public GeneratorService(BuilderService builderService) {
+    public GeneratorService(BuilderService builderService, SecurityService securityService) {
         this.builderService = builderService;
+        this.securityService = securityService;
     }
 
     public void makeDirectories(Path targetDir, boolean generateSecurity) {
@@ -53,13 +56,14 @@ public class GeneratorService {
         }
     }
     //calls readModelFile assigns keys and values of entities to models hash map and makes files based on map
-    public void parseModelFiles(Path modelDir, boolean useLombok) {
+    public void parseModelFiles(Path modelDir, boolean useLombok, String userClass, boolean generateSecurity) {
         Path parentDir = modelDir.getParent();
+        String modelDirString = modelDir.toString();
         String parentDirString = parentDir.toString();
         try (Stream<Path> paths = Files.walk(modelDir)) {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
             models.values().forEach(modelInfo -> {
-                makeFiles(modelInfo, parentDirString, useLombok);
+                makeFiles(modelInfo, parentDirString, useLombok, userClass, generateSecurity, modelDirString);
                 System.out.println("modelInfo name: " + modelInfo.getName());
                 System.out.println("modelInfo fields: " + modelInfo.getFields());
             });
@@ -68,7 +72,7 @@ public class GeneratorService {
         }
     }
 
-    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
+    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, boolean generateSecurity, String modelDirString) {
         Map<String, Path> layerDirs = Map.of(
                 "Service", serviceDir,
                 "Controller", controllerDir,
@@ -85,6 +89,25 @@ public class GeneratorService {
                 System.err.println("Failed to write " + layer + " file for " + modelInfo.getName() + ": " + e.getMessage());
             }
         });
+        if (generateSecurity) {
+            userIdType = getIdTypeForUser(userClass);
+            securityService.makeSecurityFiles(userClass, useLombok, parentDirString, modelDirString, userIdType);
+        }
+    }
+
+    public String getIdTypeForUser(String userClass) {
+        String cleanUser = userClass.toLowerCase();
+        for (String className : models.keySet()) {
+            if (className.equalsIgnoreCase(cleanUser)) {
+                ModelInfo modelInfo = models.get(className);
+                for (ModelField field : modelInfo.getFields()) {
+                    if (field.isId()) {
+                        return field.getType();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok) {

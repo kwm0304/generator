@@ -15,6 +15,7 @@ public class SecurityConfigTemplate {
                 .append("import org.springframework.context.annotation.Configuration;\n")
                 .append("import org.springframework.http.HttpStatus;\n")
                 .append("import org.springframework.security.authentication.AuthenticationManager;\n")
+                .append("import org.springframework.security.config.Customizer;\n")
                 .append("import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;\n")
                 .append("import org.springframework.security.config.annotation.web.builders.HttpSecurity;\n")
                 .append("import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\n")
@@ -45,7 +46,7 @@ public class SecurityConfigTemplate {
                                     .append(tab).append("}\n\n");
                         }
                         builder.append(tab).append("@Bean\n")
-                                .append(tab).append("SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {\n")
+                                .append(tab).append("SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource configurationSource) throws Exception {\n")
                                 .append(tab).append(tab).append("return http\n")
                                 .append(tab).append(tab).append(".csrf(AbstractHttpConfigurer::disable)\n")
                                 .append(tab).append(tab).append(tab).append(".authorizeHttpRequests(\n")
@@ -62,6 +63,7 @@ public class SecurityConfigTemplate {
                                 .append(tab).append(tab).append(tab).append(tab).append(tab).append(tab).append("(request, response, accessDeniedException)->response.setStatus(403)\n")
                                 .append(tab).append(tab).append(tab).append(tab).append(tab).append(")\n")
                                 .append(tab).append(tab).append(tab).append(tab).append(tab).append(".authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))\n")
+                                .append(tab).append(tab).append(tab).append(tab).append(tab).append(".cors(customizer -> customizer.configurationSource(configurationSource))\n")
                                 .append(tab).append(tab).append(tab).append(tab).append(".logout(l->l\n")
                                 .append(tab).append(tab).append(tab).append(tab).append(tab).append(".logoutUrl(\"logout\")\n")
                                 .append(tab).append(tab).append(tab).append(tab).append(tab).append(".addLogoutHandler(logoutHandler)\n")

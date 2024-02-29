@@ -3,17 +3,17 @@ package com.kwm0304.cli.template.security;
 import com.kwm0304.cli.StringUtils;
 
 public class AuthControllerTemplate {
-    public String genAuthController(String modelDirString, String controllerDirString, String serviceDirString, String userClass, boolean useLombok) {
-        String controllerDir = controllerDirString;
-        String convertedController = StringUtils.convertPath(controllerDir);
+    public String genAuthController(String parentDirString, String userClass, boolean useLombok, String modelDirString) {
+        String convertedParent = StringUtils.convertPath(parentDirString);
         String convertedModel = StringUtils.convertPath(modelDirString);
-        String convertedServie = StringUtils.convertPath(serviceDirString);
+        String convertedController = convertedParent + ".controller";
+        String convertedService = convertedParent + ".service";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedController).append(";\n\n")
                 .append("import ").append(convertedModel).append(".AuthResponse;\n")
                 .append("import ").append(convertedModel).append(".").append(userClass).append(";\n")
-                .append("import ").append(convertedServie).append(".AuthService;\n")
+                .append("import ").append(convertedService).append(".AuthService;\n")
                 .append("import org.springframework.http.ResponseEntity;\n")
                 .append("import org.springframework.web.bind.annotation.PostMapping;\n")
                 .append("import org.springframework.web.bind.annotation.RequestBody;\n")

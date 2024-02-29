@@ -3,9 +3,9 @@ package com.kwm0304.cli.template.security;
 import com.kwm0304.cli.StringUtils;
 
 public class TokenRepositoryTemplate {
-    public String genTokenRepository(String modelDir, String repositoryDir) {
+    public String genTokenRepository(String modelDir, String parentDirString) {
         String convertedModel = StringUtils.convertPath(modelDir);
-        String convertedRepository = StringUtils.convertPath(repositoryDir);
+        String convertedRepository = StringUtils.convertPath(parentDirString) + ".repository";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedRepository).append(";\n\n")

@@ -5,10 +5,10 @@ import com.kwm0304.cli.StringUtils;
 import java.nio.file.Path;
 
 public class LogoutHandlerTemplate {
-    public String genLogoutHandler(String parentDirString, Path modelDir, boolean useLombok) {
+    public String genLogoutHandler(String parentDirString, String modelDirString, boolean useLombok) {
         String packagePathString = parentDirString;
         String packagePath = StringUtils.convertPath(packagePathString);
-        String directoryPath = modelDir.toString();
+        String directoryPath = modelDirString;
         String convertedDirPath = StringUtils.convertPath(directoryPath);
         String tokenImport = convertedDirPath + ".Token;\n";
         String tab = "    ";

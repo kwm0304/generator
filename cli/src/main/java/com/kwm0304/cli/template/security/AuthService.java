@@ -3,10 +3,10 @@ package com.kwm0304.cli.template.security;
 import com.kwm0304.cli.StringUtils;
 
 public class AuthService {
-    public String genAuthService(String serviceDir, String modelDir, String repositoryDir, String userClass, boolean useLombok) {
-        String convertedService = StringUtils.convertPath(serviceDir);
+    public String genAuthService(String parentDirString, String modelDir, String userClass, boolean useLombok) {
+        String convertedService = StringUtils.convertPath(parentDirString) + ".service";
         String convertedModel = StringUtils.convertPath(modelDir);
-        String convertedRepository = StringUtils.convertPath(repositoryDir);
+        String convertedRepository = StringUtils.convertPath(parentDirString) + ".repository";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedService).append(";\n\n")

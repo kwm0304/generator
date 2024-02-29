@@ -3,9 +3,9 @@ package com.kwm0304.cli.template.security;
 import com.kwm0304.cli.StringUtils;
 
 public class JwtAuthFilterTemplate {
-    public String genAuthFilter(String parentDirString, String serviceDirString, boolean useLombok) {
+    public String genAuthFilter(String parentDirString,  boolean useLombok) {
         String convertedParent = StringUtils.convertPath(parentDirString);
-        String convertedService = StringUtils.convertPath(serviceDirString);
+        String convertedService = convertedParent + ".service";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedParent).append(";\n\n")
