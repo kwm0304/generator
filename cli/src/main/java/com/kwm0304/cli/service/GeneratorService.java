@@ -100,7 +100,9 @@ public class GeneratorService {
         }
     }
 
+    public String appendUserSecurityMethods(String userClass, String modelDirString) {
 
+    }
 
     public String getIdTypeForUser(String userClass) {
         String cleanUser = userClass.toLowerCase();
@@ -120,11 +122,11 @@ public class GeneratorService {
     private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok, String modelDirString, String userClass, boolean genSecurity) {
         switch (layer) {
             case "controller":
-                return builderService.makeControllerLayer(modelInfo, parentDirString, useLombok);
+                return builderService.makeControllerLayer(modelInfo, parentDirString, useLombok, modelDirString);
             case "service":
                 return builderService.makeServiceLayer(modelInfo, parentDirString, useLombok, userClass, modelDirString);
             case "repository":
-                return builderService.makeRepositoryLayer(modelInfo, parentDirString, userClass, genSecurity);
+                return builderService.makeRepositoryLayer(modelInfo, parentDirString, userClass, genSecurity, modelDirString);
             default:
                 return "";
         }

@@ -17,9 +17,9 @@ public class BuilderService {
         this.controllerTemplate = controllerTemplate;
         this.repositoryTemplate = repositoryTemplate;
     }
-    public String makeControllerLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
+    public String makeControllerLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok, String modelDirString) {
         StringBuilder builder = new StringBuilder();
-        builder.append(controllerTemplate.generateController(modelInfo, parentDirString, useLombok));
+        builder.append(controllerTemplate.generateController(modelInfo, parentDirString, useLombok, modelDirString));
         return builder.toString();
     }
     public String makeServiceLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, String modelDirString) {
@@ -27,9 +27,9 @@ public class BuilderService {
         builder.append(serviceTemplate.generateService(modelInfo, parentDirString, useLombok, userClass, modelDirString));
         return builder.toString();
     }
-    public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString, String userClass, boolean genSecurity) {
+    public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString, String userClass, boolean genSecurity, String modelDirString) {
         StringBuilder builder = new StringBuilder();
-        builder.append(repositoryTemplate.generateRepository(modelInfo, parentDirString, genSecurity, userClass));
+        builder.append(repositoryTemplate.generateRepository(modelInfo, parentDirString, genSecurity, userClass, modelDirString));
         return builder.toString();
     }
 }

@@ -16,8 +16,11 @@ public class RepositoryTemplate {
 
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedDirPath).append(".repository;\n\n")
-                .append("import org.springframework.data.jpa.repository.JpaRepository;\n")
-                .append("import ").append(convertedModel).append(".").append(modelName).append(";\n")
+                .append("import org.springframework.data.jpa.repository.JpaRepository;\n");
+        if (genSecurity) {
+            builder.append("import java.util.Optional;\n");
+        }
+                builder.append("import ").append(convertedModel).append(".").append(modelName).append(";\n")
                 .append("import org.springframework.stereotype.Repository;\n\n")
                 .append("@Repository\n")
                 .append("public interface ").append(repositoryName).append(" extends JpaRepository")

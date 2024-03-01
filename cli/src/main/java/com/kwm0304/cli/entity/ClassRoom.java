@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Class {
+public class ClassRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -16,7 +16,7 @@ public class Class {
     @Column(name = "teacher")
     private String teacher;
 
-    public Class(Integer id, Integer roomNumber, String teacher) {
+    public ClassRoom(Integer id, Integer roomNumber, String teacher) {
         this.id = id;
         this.roomNumber = roomNumber;
         this.teacher = teacher;
@@ -50,8 +50,8 @@ public class Class {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Class aClass = (Class) o;
-        return Objects.equals(getId(), aClass.getId()) && Objects.equals(getRoomNumber(), aClass.getRoomNumber()) && Objects.equals(getTeacher(), aClass.getTeacher());
+        ClassRoom classRoom = (ClassRoom) o;
+        return Objects.equals(getId(), classRoom.getId()) && Objects.equals(getRoomNumber(), classRoom.getRoomNumber()) && Objects.equals(getTeacher(), classRoom.getTeacher());
     }
 
     @Override

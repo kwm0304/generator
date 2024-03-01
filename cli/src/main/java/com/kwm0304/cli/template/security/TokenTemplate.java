@@ -39,7 +39,7 @@ public class TokenTemplate {
                             .append(tab).append("public boolean isLoggedOut() { return loggedOut; }\n")
                             .append(tab).append("public void setLoggedOut(boolean loggedOut) { this.loggedOut = loggedOut; } \n")
                             .append(tab).append("public ").append(userClass).append(" get").append(userClass).append("() {\n")
-                            .append(tab).append(tab).append("return ").append(userClass).append(";\n")
+                            .append(tab).append(tab).append("return ").append(lowercaseUser).append(";\n")
                             .append(tab).append("}\n")
                             .append(tab).append("public void set").append(userClass).append("(").append(userClass).append(" ").append(lowercaseUser).append(") {\n")
                             .append(tab).append(tab).append("this.").append(lowercaseUser).append(" = ").append(lowercaseUser).append(";\n")

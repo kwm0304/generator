@@ -16,7 +16,7 @@ public class AuthService {
                 .append("import ").append(convertedModel).append(".Token;\n")
                 .append("import ").append(convertedModel).append(".").append(userClass).append(";\n")
                 .append("import ").append(convertedRepository).append(".TokenRepository;\n")
-                .append("import ").append(convertedRepository).append(userClass).append("Repository;\n")
+                .append("import ").append(convertedRepository).append(".").append(userClass).append("Repository;\n")
                 .append("import org.springframework.security.authentication.AuthenticationManager;\n")
                 .append("import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;\n")
                 .append("import org.springframework.security.crypto.password.PasswordEncoder;\n")

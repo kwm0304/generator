@@ -8,18 +8,19 @@ import org.springframework.stereotype.Service;
 public class ControllerTemplate {
 
 
-    public String generateController(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
+    public String generateController(ModelInfo modelInfo, String parentDirString, boolean useLombok, String modelDirString) {
         String directoryPath = parentDirString;
         String convertedDirPath = StringUtils.convertPath(directoryPath);
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String serviceName = modelName + "Service";
         String idFieldType = modelInfo.getIdFieldType();
+        String convertedModel = StringUtils.convertPath(modelDirString);
 
         StringBuilder builder = new StringBuilder();
 
         builder.append("package ").append(convertedDirPath).append(".controller;\n\n")
-                .append("import ").append(convertedDirPath).append(".model.").append(modelName).append(";\n")
+                .append("import ").append(convertedModel).append(".").append(modelName).append(";\n")
                 .append("import ").append(convertedDirPath).append(".service.").append(modelName).append("Service;\n")
                 .append("import org.springframework.beans.factory.annotation.Autowired;\n")
                 .append("import org.springframework.http.ResponseEntity;\n")

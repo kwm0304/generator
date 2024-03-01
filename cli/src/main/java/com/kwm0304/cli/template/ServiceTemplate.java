@@ -15,6 +15,7 @@ public class ServiceTemplate {
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String repositoryName = modelName + "Repository";
+        String fieldType = modelInfo.getIdFieldType();
 
         StringBuilder builder = new StringBuilder();
 
@@ -35,20 +36,20 @@ public class ServiceTemplate {
                 .append("    public List<").append(modelName).append("> findAll() {\n")
                 .append("        return ").append(modelNameLowercase).append("Repository.findAll();\n")
                 .append("    }\n\n")
-                .append("    public Optional<").append(modelName).append("> findById(Long id) {\n")
+                .append("    public Optional<").append(modelName).append("> findById(").append(fieldType).append(" id) {\n")
                 .append("        return ").append(modelNameLowercase).append("Repository.findById(id);\n")
                 .append("    }\n\n")
                 .append("    public ").append(modelName).append(" save(").append(modelName).append(" ").append(modelNameLowercase).append(") {\n")
                 .append("        return ").append(modelNameLowercase).append("Repository.save(").append(modelNameLowercase).append(");\n")
                 .append("    }\n\n")
-                .append("    public ").append(modelName).append(" update(Long id, ").append(modelName).append(" ").append(modelNameLowercase).append("Details) {\n")
+                .append("    public ").append(modelName).append(" update(").append(fieldType).append(" id, ").append(modelName).append(" ").append(modelNameLowercase).append("Details) {\n")
                 .append("        if (!").append(modelNameLowercase).append("Repository.existsById(id)) {\n")
                 .append("            throw new RuntimeException(\"").append(modelName).append(" not found with id \" + id);\n")
                 .append("        }\n")
                 .append("        ").append(modelNameLowercase).append("Details.setId(id);\n")
                 .append("        return ").append(modelNameLowercase).append("Repository.save(").append(modelNameLowercase).append("Details);\n")
                 .append("    }\n\n")
-                .append("    public void deleteById(Long id) {\n")
+                .append("    public void deleteById(").append(fieldType).append(" id) {\n")
                 .append("        if (!").append(modelNameLowercase).append("Repository.existsById(id)) {\n")
                 .append("            throw new RuntimeException(\"").append(modelName).append(" not found with id \" + id);\n")
                 .append("        }\n")
