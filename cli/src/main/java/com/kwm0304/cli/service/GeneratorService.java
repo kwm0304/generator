@@ -1,6 +1,8 @@
 package com.kwm0304.cli.service;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import com.kwm0304.cli.model.FileContent;
 import com.kwm0304.cli.model.ModelField;
 import com.kwm0304.cli.model.ModelInfo;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.stream.Stream;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import org.springframework.stereotype.Service;
+import org.xml.sax.ext.LexicalHandler;
 
 @Service
 public class GeneratorService {
@@ -100,8 +104,47 @@ public class GeneratorService {
         }
     }
 
-    public String appendUserSecurityMethods(String userClass, String modelDirString) {
+    public boolean verifyUserPath(String userClass, String modelDirString, Path modelDir) {
+        String userPathString = modelDirString + "/" + userClass + ".java";
+        Path userPath = Paths.get(userPathString).toAbsolutePath().normalize();
+        Path absoluteModelDir = modelDir.toAbsolutePath().normalize();
 
+        boolean contains = userPath.startsWith(absoluteModelDir);
+        if (!contains) {
+            System.err.println("User file not found in model directory. userPath:  " + userPath + ", modelPath: " + absoluteModelDir);
+            return false;
+        }
+        return true;
+    }
+
+    public void modifyUserMethods(Path modelDir, String userClass) {
+        String userPathString = modelDir.toString() + "/" + userClass;
+        Path userPath = Paths.get(userPathString);
+        try {
+            String content = new String(Files.readAllBytes(userPath));
+            CompilationUnit compilationUnit = StaticJavaParser.parse(content);
+
+            LexicalPreservingPrinter.setup(compilationUnit);
+            compilationUnit.findFirst(ClassOrInterfaceDeclaration.class,
+                    c-> c.getNameAsString().equalsIgnoreCase(userClass))
+                    .ifPresent(classDeclaration -> {
+                        boolean hasUserDetails = classDeclaration.getImplementedTypes().stream()
+                                .anyMatch(type -> type.getNameAsString().equals("UserDetails"));
+                        if (!hasUserDetails) {
+                            ClassOrInterfaceType userDetailsType = new ClassOrInterfaceType(null, "UserDetails");
+                            classDeclaration.addImplementedType(userDetailsType);
+
+                            try {
+                                String modifiedContent = LexicalPreservingPrinter.print(compilationUnit);
+                                Files.write(userPath, modifiedContent.getBytes());
+                            } catch (IOException e) {
+                                System.err.println("Failed to write modified class file: " + e.getMessage());
+                            }
+                        }
+                    });
+        } catch (IOException e) {
+            System.err.println("Failed to read or modify class file: " + e.getMessage());
+        }
     }
 
     public String getIdTypeForUser(String userClass) {
