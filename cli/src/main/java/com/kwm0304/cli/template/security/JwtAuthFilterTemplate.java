@@ -10,7 +10,7 @@ public class JwtAuthFilterTemplate {
         String convertedService = convertedParent + ".service";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
-        builder.append("package ").append(convertedParent).append(";\n\n")
+        builder.append("package ").append(convertedParent).append(".filter;\n\n")
                 .append("import ").append(convertedService).append(".JwtService;\n")
                 .append("import ").append(convertedService).append(".UserDetailsServiceImpl;\n")
                 .append("import jakarta.servlet.FilterChain;\n")

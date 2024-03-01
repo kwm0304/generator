@@ -9,7 +9,7 @@ public class CorsConfigTemplate {
         String convertedParent = StringUtils.convertPath(parentDirString);
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
-        builder.append("package ").append(convertedParent).append(";\n\n")
+        builder.append("package ").append(convertedParent).append(".config;\n\n")
                 .append("import org.springframework.context.annotation.Bean;\n")
                 .append("import org.springframework.context.annotation.Configuration;\n")
                 .append("import org.springframework.web.cors.CorsConfiguration;\n")

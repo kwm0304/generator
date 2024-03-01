@@ -22,14 +22,14 @@ public class BuilderService {
         builder.append(controllerTemplate.generateController(modelInfo, parentDirString, useLombok));
         return builder.toString();
     }
-    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
+    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, String modelDirString) {
         StringBuilder builder = new StringBuilder();
-        builder.append(serviceTemplate.generateService(modelInfo, parentDirString, useLombok));
+        builder.append(serviceTemplate.generateService(modelInfo, parentDirString, useLombok, userClass, modelDirString));
         return builder.toString();
     }
-    public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString) {
+    public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString, String userClass, boolean genSecurity) {
         StringBuilder builder = new StringBuilder();
-        builder.append(repositoryTemplate.generateRepository(modelInfo, parentDirString));
+        builder.append(repositoryTemplate.generateRepository(modelInfo, parentDirString, genSecurity, userClass));
         return builder.toString();
     }
 }

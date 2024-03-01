@@ -12,7 +12,7 @@ public class SecurityConfigTemplate {
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedString).append(".config;\n\n")
                 .append("import ").append(convertedString).append(".filter.JwtAuthFilter;\n")
-                .append("import ").append(convertedString).append("service.UserDetailsServiceImpl;\n")
+                .append("import ").append(convertedString).append(".service.UserDetailsServiceImpl;\n")
                 .append("import org.springframework.context.annotation.Bean;\n")
                 .append("import org.springframework.context.annotation.Configuration;\n")
                 .append("import org.springframework.http.HttpStatus;\n")
@@ -28,6 +28,7 @@ public class SecurityConfigTemplate {
                 .append("import org.springframework.security.crypto.password.PasswordEncoder;\n")
                 .append("import org.springframework.security.web.SecurityFilterChain;\n")
                 .append("import org.springframework.security.web.authentication.HttpStatusEntryPoint;\n")
+                .append("import org.springframework.web.cors.CorsConfigurationSource;\n")
                 .append("import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;\n\n");
                 if (useLombok) {
                     builder.append("@AllArgsConstructor\n");
@@ -75,7 +76,7 @@ public class SecurityConfigTemplate {
                                 .append(tab).append("}\n\n")
                                 .append(tab).append("@Bean\n")
                                 .append(tab).append("public static PasswordEncoder passwordEncoder() {\n")
-                                .append(tab).append(tab).append("return new BCRyptPasswordEncoder();\n")
+                                .append(tab).append(tab).append("return new BCryptPasswordEncoder();\n")
                                 .append(tab).append("}\n\n")
                                 .append(tab).append("@Bean\n")
                                 .append(tab).append("public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {\n")

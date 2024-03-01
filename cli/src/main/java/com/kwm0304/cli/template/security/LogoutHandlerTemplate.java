@@ -29,10 +29,12 @@ public class LogoutHandlerTemplate {
                         .append("public class CustomLogoutHandler implements LogoutHandler {\n")
                         .append(tab).append("private final TokenRepository tokenRepository;\n");
                 if (!useLombok) {
-                    constructor();
+                    builder.append("    public CustomLogoutHandler(TokenRepository tokenRepository) {\n")
+                            .append("        ").append("this.tokenRepository = tokenRepository;\n")
+                            .append("    }\n");
                 }
-                builder.append(tab).append("@override\n")
-                        .append("public void logout(HttpServletRequest request,\n")
+                builder.append(tab).append("@Override\n")
+                        .append(tab).append("public void logout(HttpServletRequest request,\n")
                         .append(tab).append(tab).append(tab).append("HttpServletResponse response,\n")
                         .append(tab).append(tab).append(tab).append("Authentication authentication) {\n")
                         .append(tab).append(tab).append("String authHeader = request.getHeader(\"Authorization\");\n")
@@ -48,14 +50,5 @@ public class LogoutHandlerTemplate {
                         .append(tab).append("}\n")
                         .append("}");
                 return builder.toString();
-
-    }
-
-    public String constructor() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("    public CustomLogoutHandler(TokenRepository tokenRepository) {\n")
-                .append("        ").append("this.tokenRepository = tokenRepository;\n")
-                .append("    }\n");
-        return builder.toString();
     }
 }

@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceTemplate {
 
-    public String generateService(ModelInfo modelInfo, String parentDirString, boolean useLombok) {
+    public String generateService(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, String modelDirString) {
         String directoryPath = parentDirString;
         String convertedDirPath = StringUtils.convertPath(directoryPath);
+        String convertedModel = StringUtils.convertPath(modelDirString);
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String repositoryName = modelName + "Repository";
@@ -19,6 +20,7 @@ public class ServiceTemplate {
 
         builder.append("package ").append(convertedDirPath).append(".service;\n\n")
                 .append("import ").append(convertedDirPath).append(".repository.").append(modelName).append("Repository;\n")
+                .append("import ").append(convertedModel).append(".").append(userClass).append(";\n")
                 .append("import org.springframework.beans.factory.annotation.Autowired;\n")
                 .append("import org.springframework.stereotype.Service;\n")
                 .append("import java.util.List;\n")

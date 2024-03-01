@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 public class TokenRepositoryTemplate {
     public String genTokenRepository(String modelDir, String parentDirString, String userClass, String idField) {
         String convertedModel = StringUtils.convertPath(modelDir);
+        String lowercaseUser = userClass.toLowerCase();
         String convertedRepository = StringUtils.convertPath(parentDirString) + ".repository";
         String tab = "    ";
         StringBuilder builder = new StringBuilder();
@@ -16,12 +17,12 @@ public class TokenRepositoryTemplate {
                 .append("import org.springframework.data.jpa.repository.Query;\n")
                 .append("import java.util.List;\n")
                 .append("import java.util.Optional;\n\n")
-                .append("public interface TokenRepository extends JPARepository<Token, Integer> {\n")
+                .append("public interface TokenRepository extends JpaRepository<Token, Integer> {\n")
                 .append(tab).append("@Query(\"\"\"\n")
-                .append(tab).append(tab).append("select t from Token t inner join User u on t.user.id = u.id\n")
-                .append(tab).append(tab).append("where t.user.id = :userId and t.loggedOut = false\n")
+                .append(tab).append(tab).append("select t from Token t inner join ").append(userClass).append(" u on t.").append(lowercaseUser).append(".id = u.id\n")
+                .append(tab).append(tab).append("where t.").append(lowercaseUser).append(".id = :").append(lowercaseUser).append("Id and t.loggedOut = false\n")
                 .append(tab).append(tab).append("\"\"\")\n")
-                .append(tab).append("List<Token> findAllTokensByUser(Integer userId);\n\n")
+                .append(tab).append("List<Token> findAllTokensByUser(").append(idField).append(" ").append(lowercaseUser).append("Id);\n\n")
                 .append(tab).append("Optional<Token> findByToken(String token);\n")
                 .append("}");
         return builder.toString();

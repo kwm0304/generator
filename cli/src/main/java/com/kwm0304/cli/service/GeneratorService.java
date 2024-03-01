@@ -86,7 +86,7 @@ public class GeneratorService {
         layerDirs.forEach((layer, dirPath) -> {
             String className = modelInfo.getName() + layer + ".java";
             Path path = dirPath.resolve(className);
-            String content = generateLayerContent(modelInfo, layer.toLowerCase(), parentDirString, useLombok);
+            String content = generateLayerContent(modelInfo, layer.toLowerCase(), parentDirString, useLombok, modelDirString, userClass, generateSecurity);
 
             try (BufferedWriter writer = Files.newBufferedWriter(path)) {
                 writer.write(content);
@@ -117,14 +117,14 @@ public class GeneratorService {
         return null;
     }
 
-    private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok) {
+    private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok, String modelDirString, String userClass, boolean genSecurity) {
         switch (layer) {
             case "controller":
                 return builderService.makeControllerLayer(modelInfo, parentDirString, useLombok);
             case "service":
-                return builderService.makeServiceLayer(modelInfo, parentDirString, useLombok);
+                return builderService.makeServiceLayer(modelInfo, parentDirString, useLombok, userClass, modelDirString);
             case "repository":
-                return builderService.makeRepositoryLayer(modelInfo, parentDirString);
+                return builderService.makeRepositoryLayer(modelInfo, parentDirString, userClass, genSecurity);
             default:
                 return "";
         }
