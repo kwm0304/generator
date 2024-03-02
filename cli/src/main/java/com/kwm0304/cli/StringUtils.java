@@ -8,4 +8,13 @@ public class StringUtils {
         }
         return null;
     }
+
+    public static String cleanClassName(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        String first = input.substring(0,1).toUpperCase();
+        String rest = input.substring(1).toLowerCase();
+        return first + rest;
+    }
 }
