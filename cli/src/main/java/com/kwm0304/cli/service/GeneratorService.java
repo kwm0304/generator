@@ -167,6 +167,7 @@ public class GeneratorService {
     }
 
     public void genSecurityFiles(String userClass, boolean useLombok, String parentDirString, String modelDirString, Path modelDir) {
+        parserService.modifyUserMethods(modelDir, userClass, modelDirString);
         String userIdType = getIdTypeForUser(userClass);
         List<FileContent> configFiles = securityService.makeConfigFiles(parentDirString, modelDirString, useLombok);
         for (FileContent file : configFiles) {

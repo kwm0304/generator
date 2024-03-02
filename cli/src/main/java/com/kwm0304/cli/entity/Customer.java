@@ -2,10 +2,16 @@ package com.kwm0304.cli.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class Customer {
+public class Customer implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,7 +33,8 @@ public class Customer {
         this.password = password;
     }
 
-    public Customer() {};
+    public Customer() {
+    }
 
     public Long getId() {
         return id;
@@ -63,8 +70,10 @@ public class Customer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Customer customer = (Customer) o;
         return Objects.equals(getId(), customer.getId()) && Objects.equals(getUsername(), customer.getUsername()) && Objects.equals(getEmail(), customer.getEmail()) && Objects.equals(getPassword(), customer.getPassword());
     }
@@ -76,12 +85,53 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return "Customer{" + "id=" + id + ", username='" + username + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + '}';
+    }
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Token> tokens;
+
+    @Override()
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override()
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override()
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override()
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override()
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    public Role getRole() {
+        return this.role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public List<Token> getTokens() {
+        return this.tokens;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
     }
 }
-

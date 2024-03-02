@@ -32,6 +32,7 @@ public class ParserService {
             try {
                 String filePath = modelDirString + "/" + userClass + ".java";
                 FileInputStream in = new FileInputStream(filePath);
+                System.out.println("filePath string: " + filePath);
                 CompilationUnit compilationUnit = StaticJavaParser.parse(in);
 
                 addImports(compilationUnit);
@@ -43,13 +44,14 @@ public class ParserService {
                     roleField.addAnnotation(new NormalAnnotationExpr(
                             StaticJavaParser.parseName("Enumerated"),
                             new NodeList<>(
-                                    new MemberValuePair("value", new NameExpr("EnumType.String")))
+                                    new MemberValuePair("value", new NameExpr("EnumType.STRING")))
                     ));
 
                     FieldDeclaration tokenField = target.addField("List<Token>", "tokens", Modifier.Keyword.PRIVATE);
-                    tokenField.addAnnotation(new SingleMemberAnnotationExpr(
-                            StaticJavaParser.parseName("OneToMany"),
-                            new StringLiteralExpr("mappedBy = \"" + lowercaseModel + "\"")
+                    tokenField.addAnnotation(new NormalAnnotationExpr(
+                            new Name("OneToMany"),
+                            NodeList.nodeList(new MemberValuePair("mappedBy", new StringLiteralExpr(lowercaseModel))
+                            )
                     ));
                     addUserDetailsMethods(target);
                     addGetterSetter(target, "Role", "role");
@@ -103,7 +105,7 @@ public class ParserService {
         MethodDeclaration getAuthorities = target.addMethod("getAuthorities", Modifier.Keyword.PUBLIC);
         getAuthorities.addAnnotation(Override.class);
         getAuthorities.setType("Collection<? extends GrantedAuthority>");
-        getAuthorities.setBody(StaticJavaParser.parseBlock("{ return List.of(new SimpleGrantedAuthority(role.name())"));
+        getAuthorities.setBody(StaticJavaParser.parseBlock("{ return List.of(new SimpleGrantedAuthority(role.name())); }"));
     }
 
     private void addGetterSetter(ClassOrInterfaceDeclaration target, String fieldType, String fieldName) {
