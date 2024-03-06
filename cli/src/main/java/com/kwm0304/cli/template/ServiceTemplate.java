@@ -21,19 +21,26 @@ public class ServiceTemplate {
 
         builder.append("package ").append(convertedDirPath).append(".service;\n\n")
                 .append("import ").append(convertedDirPath).append(".repository.").append(modelName).append("Repository;\n")
-                .append("import ").append(convertedModel).append(".").append(userClass).append(";\n")
+                .append("import ").append(convertedModel).append(".").append(modelName).append(";\n")
                 .append("import org.springframework.beans.factory.annotation.Autowired;\n")
                 .append("import org.springframework.stereotype.Service;\n")
                 .append("import java.util.List;\n")
-                .append("import java.util.Optional;\n\n")
-                .append("@Service\n")
+                .append("import java.util.Optional;\n\n");
+
+        if (useLombok) {
+            builder.append("@AllArgsConstructor\n");
+        }
+                builder.append("@Service\n")
                 .append("public class ").append(modelName).append("Service {\n\n")
-                .append("    private final ").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository;\n\n")
-                .append("    @Autowired\n")
-                .append("    public ").append(modelName).append("Service(").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository) {\n")
-                .append("        this.").append(modelNameLowercase).append("Repository = ").append(modelNameLowercase).append("Repository;\n")
-                .append("    }\n\n")
-                .append("    public List<").append(modelName).append("> findAll() {\n")
+                        .append("    @Autowired\n")
+                .append("    private final ").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository;\n\n");
+
+        if (!useLombok) {
+            builder.append("    public ").append(modelName).append("Service(").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository) {\n")
+                    .append("        this.").append(modelNameLowercase).append("Repository = ").append(modelNameLowercase).append("Repository;\n")
+                    .append("    }\n\n");
+        }
+                builder.append("    public List<").append(modelName).append("> findAll() {\n")
                 .append("        return ").append(modelNameLowercase).append("Repository.findAll();\n")
                 .append("    }\n\n")
                 .append("    public Optional<").append(modelName).append("> findById(").append(fieldType).append(" id) {\n")
