@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 @Service
 public class ParserService {
     public void modifyUserMethods(Path modelDir, String userClass, String modelDirString) {
+        //This is generating each returned text twice.
         String lowercaseModel = userClass.toLowerCase();
         String cleanUserClass = StringUtils.cleanClassName(userClass);
         if (verifyUserPath(userClass, modelDirString, modelDir)) {
@@ -30,10 +31,11 @@ public class ParserService {
                 System.out.println("filePath string: " + filePath);
                 CompilationUnit compilationUnit = StaticJavaParser.parse(in);
 
-                addImports(compilationUnit);
+
 
                 ClassOrInterfaceDeclaration target = compilationUnit.getClassByName(cleanUserClass).orElse(null);
-                if (target != null) {
+                if (target != null && !isUserDetailsImplemented(target)) {
+                    addImports(compilationUnit);
                     amendUserClassDeclaration(target);
                     FieldDeclaration roleField = target.addField("Role", "role", Modifier.Keyword.PRIVATE);
                     roleField.addAnnotation(new NormalAnnotationExpr(
@@ -59,6 +61,11 @@ public class ParserService {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean isUserDetailsImplemented(ClassOrInterfaceDeclaration target) {
+        return target.getImplementedTypes().stream()
+                .anyMatch(t -> t.getNameAsString().equals("UserDetails"));
     }
 
     public boolean verifyUserPath(String userClass, String modelDirString, Path modelDir) {

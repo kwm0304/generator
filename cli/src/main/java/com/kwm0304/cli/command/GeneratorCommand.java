@@ -1,6 +1,12 @@
 package com.kwm0304.cli.command;
 
+import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.service.GeneratorService;
+import org.jline.utils.AttributedString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.component.SingleItemSelector;
+import org.springframework.shell.component.flow.ComponentFlow;
+import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -8,7 +14,8 @@ import org.springframework.shell.standard.ShellOption;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ShellComponent
 public class GeneratorCommand {
@@ -17,6 +24,7 @@ public class GeneratorCommand {
     private Path modelDir;
     private GeneratorService generatorService;
     private String userClass;
+    private List<String> fileNames = new ArrayList<>();
 
     public GeneratorCommand(GeneratorService generatorService) {
         this.generatorService = generatorService;
@@ -47,8 +55,6 @@ public class GeneratorCommand {
 
     }
 
-
-
     public boolean verifyPath(String modelDirString) {
         Scanner scanner = new Scanner(System.in);
         File directory = new File(modelDirString);
@@ -58,23 +64,38 @@ public class GeneratorCommand {
             System.out.println("Files found in directory:");
             for (File file : fileList) {
                 System.out.println(file.getName());
+                String cleanFile = file.getName().substring(0, file.getName().length() - 5);
+                fileNames.add(cleanFile);
                 //ask user if this is correct path, if so continue, if not, exit
             }
             System.out.print("Is this the correct path? (yes/no): ");
             String userInput = scanner.nextLine();
-            return "yes".equalsIgnoreCase(userInput);
+            if ("no".equalsIgnoreCase(userInput) || "n".equalsIgnoreCase(userInput)) {
+                System.out.println("Incorrect directory chosen.");
+                return false;
+            }
+            return ("yes".equalsIgnoreCase(userInput) || "y".equalsIgnoreCase(userInput));
         } else {
             System.out.println("The directory is empty or does not exist.");
             return false;
         }
     }
 
-    public String getUserClass() {
+    public void getUserClass() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("What is the name of your user class?");
-        String userInput = scanner.nextLine();
-        return userClass = userInput;
+        while (true) {
+            System.out.println("What is the name of your user class?");
+            String userInput = scanner.nextLine();
+            if (isFilePresent(userInput)) {
+                userClass =  StringUtils.cleanClassName(userInput);
+                break;
+            } else {
+                System.out.println("No class with this name was found.");
+            }
+        }
     }
 
-
+    public boolean isFilePresent(String input) {
+        return fileNames.stream().anyMatch(fileName -> fileName.equalsIgnoreCase(input));
+    }
 }

@@ -7,3 +7,5 @@
 1709245305693:generate -l false -s true -p src/main/java/com/kwm0304/cli/entity
 1709246887330:generate -l false -s true -p cli/src/main/java/com/kwm0304/cli/entity
 1709246919400:generate -l false -s true -p src/main/java/com/kwm0304/cli/entity
+1709492865794:generate -l false -s true -p src/main/java/com/kwm0304/cli
+1709492894858:generate -l false -s true -p src/main/java/com/kwm0304/cli/entity

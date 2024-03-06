@@ -2,7 +2,6 @@ package com.kwm0304.cli.entity;
 
 import jakarta.persistence.*;
 
-
 import java.util.Objects;
 
 @Entity

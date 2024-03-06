@@ -98,7 +98,6 @@ public class GeneratorService {
             }
         });
         if (generateSecurity) {
-
             genSecurityFiles(userClass, useLombok, parentDirString, modelDirString, modelDir);
         }
     }
