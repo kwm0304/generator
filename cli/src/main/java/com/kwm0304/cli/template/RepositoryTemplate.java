@@ -1,23 +1,29 @@
 package com.kwm0304.cli.template;
 
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.model.ModelInfo;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RepositoryTemplate {
-    public String generateRepository(ModelInfo modelInfo, String parentDirString, boolean genSecurity, String userClass, String modelDirString) {
+
+    private final GeneratorConfig generatorConfig;
+    public RepositoryTemplate(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
+    public String generateRepository(ModelInfo modelInfo) {
         String modelName = modelInfo.getName();
         String repositoryName = modelName + "Repository";
         String idFieldType = modelInfo.getIdFieldType();
-        String directoryPath = parentDirString;
+        String directoryPath = generatorConfig.getTargetDir().toString();
         String convertedDirPath = StringUtils.convertPath(directoryPath);
-        String convertedModel = StringUtils.convertPath(modelDirString);
+        String convertedModel = StringUtils.convertPath(generatorConfig.getModelDirString());
 
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(convertedDirPath).append(".repository;\n\n")
                 .append("import org.springframework.data.jpa.repository.JpaRepository;\n");
-        if (genSecurity) {
+        if (generatorConfig.isGenerateSecurity()) {
             builder.append("import java.util.Optional;\n");
         }
                 builder.append("import ").append(convertedModel).append(".").append(modelName).append(";\n")
@@ -25,8 +31,8 @@ public class RepositoryTemplate {
                 .append("@Repository\n")
                 .append("public interface ").append(repositoryName).append(" extends JpaRepository")
                 .append("<").append(modelName).append(", ").append(idFieldType).append("> {\n");
-                if (genSecurity && modelName.equalsIgnoreCase(userClass)) {
-                    builder.append("    Optional<").append(userClass).append("> findByUsername(String username);\n");
+                if (generatorConfig.isGenerateSecurity() && modelName.equalsIgnoreCase(generatorConfig.getUserClass())) {
+                    builder.append("    Optional<").append(generatorConfig.getUserClass()).append("> findByUsername(String username);\n");
                 }
                 builder.append("}");
         return builder.toString();

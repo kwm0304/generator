@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,17 @@ import java.nio.file.Paths;
 
 @Service
 public class ParserService {
-    public void modifyUserMethods(Path modelDir, String userClass, String modelDirString) {
+    private final GeneratorConfig generatorConfig;
+    public ParserService(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
+    public void modifyUserMethods() {
         //This is generating each returned text twice.
-        String lowercaseModel = userClass.toLowerCase();
-        String cleanUserClass = StringUtils.cleanClassName(userClass);
-        if (verifyUserPath(userClass, modelDirString, modelDir)) {
+        String lowercaseModel = generatorConfig.getUserClass().toLowerCase();
+        String cleanUserClass = StringUtils.cleanClassName(generatorConfig.getUserClass());
+        if (verifyUserPath()) {
             try {
-                String filePath = modelDirString + "/" + userClass + ".java";
+                String filePath = generatorConfig.getModelDirString() + "/" + generatorConfig.getUserClass() + ".java";
                 FileInputStream in = new FileInputStream(filePath);
                 System.out.println("filePath string: " + filePath);
                 CompilationUnit compilationUnit = StaticJavaParser.parse(in);
@@ -68,10 +73,10 @@ public class ParserService {
                 .anyMatch(t -> t.getNameAsString().equals("UserDetails"));
     }
 
-    public boolean verifyUserPath(String userClass, String modelDirString, Path modelDir) {
-        String userPathString = modelDirString + "/" + userClass + ".java";
+    public boolean verifyUserPath() {
+        String userPathString = generatorConfig.getModelDirString() + "/" + generatorConfig.getUserClass() + ".java";
         Path userPath = Paths.get(userPathString).toAbsolutePath().normalize();
-        Path absoluteModelDir = modelDir.toAbsolutePath().normalize();
+        Path absoluteModelDir = generatorConfig.getModelDir().toAbsolutePath().normalize();
 
         boolean contains = userPath.startsWith(absoluteModelDir);
         if (!contains) {

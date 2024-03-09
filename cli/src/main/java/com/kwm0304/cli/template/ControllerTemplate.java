@@ -1,5 +1,6 @@
 package com.kwm0304.cli.template;
 
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.model.ModelInfo;
 import org.springframework.stereotype.Service;
@@ -7,15 +8,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ControllerTemplate {
 
+    private final GeneratorConfig generatorConfig;
+    public ControllerTemplate(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
-    public String generateController(ModelInfo modelInfo, String parentDirString, boolean useLombok, String modelDirString) {
-        String directoryPath = parentDirString;
+    public String generateController(ModelInfo modelInfo) {
+        String directoryPath = generatorConfig.getTargetDir().toString();
         String convertedDirPath = StringUtils.convertPath(directoryPath);
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String serviceName = modelName + "Service";
         String idFieldType = modelInfo.getIdFieldType();
-        String convertedModel = StringUtils.convertPath(modelDirString);
+        String convertedModel = StringUtils.convertPath(generatorConfig.getModelDirString());
 
         StringBuilder builder = new StringBuilder();
 

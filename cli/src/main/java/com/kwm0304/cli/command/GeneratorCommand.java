@@ -1,5 +1,6 @@
 package com.kwm0304.cli.command;
 
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.service.GeneratorService;
 import org.jline.utils.AttributedString;
@@ -19,15 +20,13 @@ import java.util.stream.Collectors;
 
 @ShellComponent
 public class GeneratorCommand {
-
-    private Path targetDir;
-    private Path modelDir;
     private GeneratorService generatorService;
-    private String userClass;
+    private final GeneratorConfig generatorConfig;
     private List<String> fileNames = new ArrayList<>();
 
-    public GeneratorCommand(GeneratorService generatorService) {
+    public GeneratorCommand(GeneratorService generatorService, GeneratorConfig generatorConfig) {
         this.generatorService = generatorService;
+        this.generatorConfig = generatorConfig;
     }
 
     @ShellMethod(key = "generate", value = "Generates boilerplate controller, repository, service and optional security files based on path to models directory.")
@@ -36,16 +35,19 @@ public class GeneratorCommand {
             @ShellOption(value = "-s") boolean generateSecurity,
             @ShellOption(value = "-p") String modelDirString
     ) {
-        if (verifyPath(modelDirString)) {
-            modelDir = Paths.get(modelDirString);
-            targetDir = modelDir.getParent();
+        generatorConfig.setModelDirString(modelDirString);
+        if (verifyPath()) {
+            generatorConfig.setModelDir(Paths.get(modelDirString));
+            generatorConfig.setTargetDir((generatorConfig.getModelDir()).getParent());
+            generatorConfig.setUseLombok(useLombok);
+            generatorConfig.setGenerateSecurity(generateSecurity);
             if (generateSecurity) {
                 getUserClass();
             }
             //make directories
-            generatorService.makeDirectories(targetDir, generateSecurity);
+            generatorService.makeDirectories();
             //parse model files
-            generatorService.parseModelFiles(modelDir, useLombok, userClass, generateSecurity);
+            generatorService.parseModelFiles();
 
         } else {
             System.out.println("Operation aborted by user.");
@@ -55,9 +57,9 @@ public class GeneratorCommand {
 
     }
 
-    public boolean verifyPath(String modelDirString) {
+    public boolean verifyPath() {
         Scanner scanner = new Scanner(System.in);
-        File directory = new File(modelDirString);
+        File directory = new File(generatorConfig.getModelDirString());
         File[] fileList = directory.listFiles();
 
         if (fileList != null & fileList.length > 0) {
@@ -87,7 +89,7 @@ public class GeneratorCommand {
             System.out.println("What is the name of your user class?");
             String userInput = scanner.nextLine();
             if (isFilePresent(userInput)) {
-                userClass =  StringUtils.cleanClassName(userInput);
+                generatorConfig.setUserClass(StringUtils.cleanClassName(userInput));
                 break;
             } else {
                 System.out.println("No class with this name was found.");

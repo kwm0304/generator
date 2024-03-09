@@ -1,5 +1,6 @@
 package com.kwm0304.cli.template;
 
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.StringUtils;
 import com.kwm0304.cli.model.ModelInfo;
 import org.springframework.stereotype.Service;
@@ -7,11 +8,15 @@ import org.springframework.stereotype.Service;
 //TODO: need to pass in path to repository and import it
 @Service
 public class ServiceTemplate {
+    private final GeneratorConfig generatorConfig;
+    public ServiceTemplate(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
-    public String generateService(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, String modelDirString) {
-        String directoryPath = parentDirString;
+    public String generateService(ModelInfo modelInfo) {
+        String directoryPath = generatorConfig.getTargetDir().toString();
         String convertedDirPath = StringUtils.convertPath(directoryPath);
-        String convertedModel = StringUtils.convertPath(modelDirString);
+        String convertedModel = StringUtils.convertPath(generatorConfig.getModelDirString());
         String modelName = modelInfo.getName();
         String modelNameLowercase = modelName.substring(0, 1).toLowerCase() + modelName.substring(1);
         String repositoryName = modelName + "Repository";
@@ -27,7 +32,7 @@ public class ServiceTemplate {
                 .append("import java.util.List;\n")
                 .append("import java.util.Optional;\n\n");
 
-        if (useLombok) {
+        if (generatorConfig.isUseLombok()) {
             builder.append("@AllArgsConstructor\n");
         }
                 builder.append("@Service\n")
@@ -35,7 +40,7 @@ public class ServiceTemplate {
                         .append("    @Autowired\n")
                 .append("    private final ").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository;\n\n");
 
-        if (!useLombok) {
+        if (!generatorConfig.isUseLombok()) {
             builder.append("    public ").append(modelName).append("Service(").append(repositoryName).append(" ").append(modelNameLowercase).append("Repository) {\n")
                     .append("        this.").append(modelNameLowercase).append("Repository = ").append(modelNameLowercase).append("Repository;\n")
                     .append("    }\n\n");

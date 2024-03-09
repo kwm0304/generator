@@ -3,6 +3,7 @@ package com.kwm0304.cli.service;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.model.FileContent;
 import com.kwm0304.cli.model.ModelField;
 import com.kwm0304.cli.model.ModelInfo;
@@ -30,28 +31,33 @@ public class GeneratorService {
     private Map<String, ModelInfo> models = new HashMap<>();
     private BuilderService builderService;
     private SecurityService securityService;
+    private final GeneratorConfig generatorConfig;
     @Autowired
     private ParserService parserService;
 
-    public GeneratorService(BuilderService builderService, SecurityService securityService, ParserService parserService) {
+    public GeneratorService(BuilderService builderService,
+                            SecurityService securityService,
+                            ParserService parserService,
+                            GeneratorConfig generatorConfig) {
         this.builderService = builderService;
         this.securityService = securityService;
         this.parserService = parserService;
+        this.generatorConfig = generatorConfig;
     }
 
-    public void makeDirectories(Path targetDir, boolean generateSecurity) {
-        if (targetDir == null) {
+    public void makeDirectories() {
+        if (generatorConfig.getTargetDir() == null) {
             System.err.println("Target directory cannot be null");
             return;
         }
         try {
-            serviceDir = targetDir.resolve("service");
-            controllerDir = targetDir.resolve("controller");
-            repositoryDir = targetDir.resolve("repository");
+            serviceDir = generatorConfig.getTargetDir().resolve("service");
+            controllerDir = generatorConfig.getTargetDir().resolve("controller");
+            repositoryDir = generatorConfig.getTargetDir().resolve("repository");
 
-            if (generateSecurity) {
-                configDir = targetDir.resolve("config");
-                filterDir = targetDir.resolve("filter");
+            if (generatorConfig.isGenerateSecurity()) {
+                configDir = generatorConfig.getTargetDir().resolve("config");
+                filterDir = generatorConfig.getTargetDir().resolve("filter");
                 Files.createDirectories(configDir);
                 Files.createDirectories(filterDir);
             }
@@ -64,14 +70,11 @@ public class GeneratorService {
         }
     }
     //calls readModelFile assigns keys and values of entities to models hash map and makes files based on map
-    public void parseModelFiles(Path modelDir, boolean useLombok, String userClass, boolean generateSecurity) {
-        Path parentDir = modelDir.getParent();
-        String modelDirString = modelDir.toString();
-        String parentDirString = parentDir.toString();
-        try (Stream<Path> paths = Files.walk(modelDir)) {
+    public void parseModelFiles() {
+        try (Stream<Path> paths = Files.walk(generatorConfig.getModelDir())) {
             paths.filter(Files::isRegularFile).forEach(this::readModelFile);
             models.values().forEach(modelInfo -> {
-                makeFiles(modelInfo, parentDirString, useLombok, userClass, generateSecurity, modelDirString, modelDir);
+                makeFiles(modelInfo);
                 System.out.println("modelInfo name: " + modelInfo.getName());
                 System.out.println("modelInfo fields: " + modelInfo.getFields());
             });
@@ -80,7 +83,7 @@ public class GeneratorService {
         }
     }
 
-    private void makeFiles(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, boolean generateSecurity, String modelDirString, Path modelDir) {
+    private void makeFiles(ModelInfo modelInfo) {
         Map<String, Path> layerDirs = Map.of(
                 "Service", serviceDir,
                 "Controller", controllerDir,
@@ -89,7 +92,7 @@ public class GeneratorService {
         layerDirs.forEach((layer, dirPath) -> {
             String className = modelInfo.getName() + layer + ".java";
             Path path = dirPath.resolve(className);
-            String content = generateLayerContent(modelInfo, layer.toLowerCase(), parentDirString, useLombok, modelDirString, userClass, generateSecurity);
+            String content = generateLayerContent(modelInfo, layer.toLowerCase());
 
             try (BufferedWriter writer = Files.newBufferedWriter(path)) {
                 writer.write(content);
@@ -97,8 +100,8 @@ public class GeneratorService {
                 System.err.println("Failed to write " + layer + " file for " + modelInfo.getName() + ": " + e.getMessage());
             }
         });
-        if (generateSecurity) {
-            genSecurityFiles(userClass, useLombok, parentDirString, modelDirString, modelDir);
+        if (generatorConfig.isGenerateSecurity()) {
+            genSecurityFiles();
         }
     }
 
@@ -152,48 +155,48 @@ public class GeneratorService {
         return null;
     }
 
-    private String generateLayerContent(ModelInfo modelInfo, String layer, String parentDirString, boolean useLombok, String modelDirString, String userClass, boolean genSecurity) {
+    private String generateLayerContent(ModelInfo modelInfo) {
         switch (layer) {
             case "controller":
-                return builderService.makeControllerLayer(modelInfo, parentDirString, useLombok, modelDirString);
+                return builderService.makeControllerLayer(modelInfo);
             case "service":
-                return builderService.makeServiceLayer(modelInfo, parentDirString, useLombok, userClass, modelDirString);
+                return builderService.makeServiceLayer(modelInfo);
             case "repository":
-                return builderService.makeRepositoryLayer(modelInfo, parentDirString, userClass, genSecurity, modelDirString);
+                return builderService.makeRepositoryLayer(modelInfo);
             default:
                 return "";
         }
     }
 
-    public void genSecurityFiles(String userClass, boolean useLombok, String parentDirString, String modelDirString, Path modelDir) {
-        parserService.modifyUserMethods(modelDir, userClass, modelDirString);
-        String userIdType = getIdTypeForUser(userClass);
-        List<FileContent> configFiles = securityService.makeConfigFiles(parentDirString, modelDirString, useLombok);
+    public void genSecurityFiles() {
+        parserService.modifyUserMethods();
+        String userIdType = getIdTypeForUser();
+        List<FileContent> configFiles = securityService.makeConfigFiles();
         for (FileContent file : configFiles) {
             writeSecurityFiles(file.getFileName(), configDir, file.getContent());
         }
 
-        List<FileContent> filterFiles = securityService.makeFilterFiles(parentDirString, useLombok);
+        List<FileContent> filterFiles = securityService.makeFilterFiles();
         for (FileContent file : filterFiles) {
             writeSecurityFiles(file.getFileName(), filterDir, file.getContent());
         }
 
-        List<FileContent> serviceFiles = securityService.makeServiceFiles(parentDirString, modelDirString, userClass, useLombok);
+        List<FileContent> serviceFiles = securityService.makeServiceFiles();
         for (FileContent file : serviceFiles) {
             writeSecurityFiles(file.getFileName(), serviceDir, file.getContent());
         }
 
-        List<FileContent> controllerFiles = securityService.makeControllerFiles(parentDirString, userClass, useLombok, modelDirString);
+        List<FileContent> controllerFiles = securityService.makeControllerFiles();
         for (FileContent file : controllerFiles) {
             writeSecurityFiles(file.getFileName(), controllerDir, file.getContent());
         }
 
-        List<FileContent> modelFiles = securityService.makeModelFiles(modelDirString, useLombok, userClass);
+        List<FileContent> modelFiles = securityService.makeModelFiles();
         for (FileContent file : modelFiles) {
-            writeSecurityFiles(file.getFileName(), modelDir, file.getContent());
+            writeSecurityFiles(file.getFileName(), generatorConfig.getModelDir(), file.getContent());
         }
 
-        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(modelDirString, parentDirString, userClass, userIdType);
+        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(userIdType);
         for (FileContent file : repositoryFiles) {
             writeSecurityFiles(file.getFileName(), repositoryDir, file.getContent());
         }

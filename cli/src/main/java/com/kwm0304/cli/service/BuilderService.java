@@ -1,5 +1,6 @@
 package com.kwm0304.cli.service;
 
+import com.kwm0304.cli.GeneratorConfig;
 import com.kwm0304.cli.model.ModelInfo;
 import com.kwm0304.cli.template.ControllerTemplate;
 import com.kwm0304.cli.template.RepositoryTemplate;
@@ -11,25 +12,27 @@ public class BuilderService {
     private ServiceTemplate serviceTemplate;
     private ControllerTemplate controllerTemplate;
     private RepositoryTemplate repositoryTemplate;
+    private final GeneratorConfig generatorConfig;
 
-    public BuilderService(ServiceTemplate serviceTemplate, ControllerTemplate controllerTemplate, RepositoryTemplate repositoryTemplate) {
+    public BuilderService(ServiceTemplate serviceTemplate, ControllerTemplate controllerTemplate, RepositoryTemplate repositoryTemplate, GeneratorConfig generatorConfig) {
         this.serviceTemplate = serviceTemplate;
         this.controllerTemplate = controllerTemplate;
         this.repositoryTemplate = repositoryTemplate;
+        this.generatorConfig = generatorConfig;
     }
-    public String makeControllerLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok, String modelDirString) {
+    public String makeControllerLayer(ModelInfo modelInfo) {
         StringBuilder builder = new StringBuilder();
-        builder.append(controllerTemplate.generateController(modelInfo, parentDirString, useLombok, modelDirString));
+        builder.append(controllerTemplate.generateController(modelInfo));
         return builder.toString();
     }
-    public String makeServiceLayer(ModelInfo modelInfo, String parentDirString, boolean useLombok, String userClass, String modelDirString) {
+    public String makeServiceLayer(ModelInfo modelInfo) {
         StringBuilder builder = new StringBuilder();
-        builder.append(serviceTemplate.generateService(modelInfo, parentDirString, useLombok, userClass, modelDirString));
+        builder.append(serviceTemplate.generateService(modelInfo));
         return builder.toString();
     }
-    public String makeRepositoryLayer(ModelInfo modelInfo, String parentDirString, String userClass, boolean genSecurity, String modelDirString) {
+    public String makeRepositoryLayer(ModelInfo modelInfo) {
         StringBuilder builder = new StringBuilder();
-        builder.append(repositoryTemplate.generateRepository(modelInfo, parentDirString, genSecurity, userClass, modelDirString));
+        builder.append(repositoryTemplate.generateRepository(modelInfo));
         return builder.toString();
     }
 }
