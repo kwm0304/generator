@@ -1,7 +1,10 @@
 package com.kwm0304.cli;
 
+import org.springframework.context.annotation.Configuration;
+
 import java.nio.file.Path;
 
+@Configuration
 public class GeneratorConfig {
     private Path targetDir;
     private Path modelDir;
