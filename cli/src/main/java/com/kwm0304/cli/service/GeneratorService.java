@@ -155,7 +155,7 @@ public class GeneratorService {
         return null;
     }
 
-    private String generateLayerContent(ModelInfo modelInfo) {
+    private String generateLayerContent(ModelInfo modelInfo, String layer) {
         switch (layer) {
             case "controller":
                 return builderService.makeControllerLayer(modelInfo);
@@ -170,33 +170,56 @@ public class GeneratorService {
 
     public void genSecurityFiles() {
         parserService.modifyUserMethods();
-        String userIdType = getIdTypeForUser();
-        List<FileContent> configFiles = securityService.makeConfigFiles();
+        String userIdType = getIdTypeForUser(generatorConfig.getUserClass());
+        List<FileContent> configFiles = securityService.makeConfigFiles(
+                generatorConfig.getTargetDir().toString(),
+                generatorConfig.getModelDirString(),
+                generatorConfig.isUseLombok());
         for (FileContent file : configFiles) {
             writeSecurityFiles(file.getFileName(), configDir, file.getContent());
         }
 
-        List<FileContent> filterFiles = securityService.makeFilterFiles();
+        List<FileContent> filterFiles = securityService.makeFilterFiles(
+                generatorConfig.getTargetDir().toString(),
+                generatorConfig.isUseLombok());
         for (FileContent file : filterFiles) {
             writeSecurityFiles(file.getFileName(), filterDir, file.getContent());
         }
 
-        List<FileContent> serviceFiles = securityService.makeServiceFiles();
+        List<FileContent> serviceFiles = securityService.makeServiceFiles(
+                generatorConfig.getTargetDir().toString(),
+                generatorConfig.getModelDirString(),
+                generatorConfig.getUserClass(),
+                generatorConfig.isUseLombok());
         for (FileContent file : serviceFiles) {
             writeSecurityFiles(file.getFileName(), serviceDir, file.getContent());
         }
 
-        List<FileContent> controllerFiles = securityService.makeControllerFiles();
+        List<FileContent> controllerFiles = securityService.makeControllerFiles(
+                generatorConfig.getTargetDir().toString(),
+                generatorConfig.getUserClass(),
+                generatorConfig.isUseLombok(),
+                generatorConfig.getModelDirString()
+                );
         for (FileContent file : controllerFiles) {
             writeSecurityFiles(file.getFileName(), controllerDir, file.getContent());
         }
 
-        List<FileContent> modelFiles = securityService.makeModelFiles();
+        List<FileContent> modelFiles = securityService.makeModelFiles(
+                generatorConfig.getModelDirString(),
+                generatorConfig.isUseLombok(),
+                generatorConfig.getUserClass()
+        );
         for (FileContent file : modelFiles) {
             writeSecurityFiles(file.getFileName(), generatorConfig.getModelDir(), file.getContent());
         }
 
-        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(userIdType);
+        List<FileContent> repositoryFiles = securityService.makeRepositoryFiles(
+                generatorConfig.getModelDirString(),
+                generatorConfig.getTargetDir().toString(),
+                generatorConfig.getUserClass(),
+                userIdType
+        );
         for (FileContent file : repositoryFiles) {
             writeSecurityFiles(file.getFileName(), repositoryDir, file.getContent());
         }

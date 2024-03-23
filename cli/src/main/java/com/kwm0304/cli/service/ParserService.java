@@ -26,7 +26,6 @@ public class ParserService {
         this.generatorConfig = generatorConfig;
     }
     public void modifyUserMethods() {
-        //This is generating each returned text twice.
         String lowercaseModel = generatorConfig.getUserClass().toLowerCase();
         String cleanUserClass = StringUtils.cleanClassName(generatorConfig.getUserClass());
         if (verifyUserPath()) {
