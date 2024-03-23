@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @ShellComponent
 public class GeneratorCommand {
+    @Autowired
     private GeneratorService generatorService;
     private final GeneratorConfig generatorConfig;
     private List<String> fileNames = new ArrayList<>();
